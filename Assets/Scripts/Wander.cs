@@ -11,6 +11,7 @@ public class Wander : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		rotationSpeed = 5;
+		moveSpeed = 10;
 		wanderR = 30.0f; // Radius for our "wander circle"
 		wanderD = 100f; // Distance for our "wander circle"
 	}
