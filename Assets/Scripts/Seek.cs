@@ -9,6 +9,7 @@ public class Seek : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		moveSpeed = 10;
 		rotationSpeed = 5;
 	}
 	
