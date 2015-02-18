@@ -16,6 +16,7 @@ public class Flee : MonoBehaviour {
 	void Update () {
 		direction = this.transform.position - target.transform.position;
 		this.transform.LookAt(target.transform, Vector3.up);
-		this.transform.Translate(Vector3.forward * -moveSpeed * Time.deltaTime);
+		this.transform.rotation.Set(this.transform.rotation.x, this.transform.rotation.y + 180.0f, this.transform.rotation.z, this.transform.rotation.w);
+		this.transform.Translate(Vector3.back * moveSpeed * Time.deltaTime);
 	}
 }
