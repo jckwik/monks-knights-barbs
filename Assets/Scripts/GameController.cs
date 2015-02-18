@@ -9,13 +9,14 @@ public class GameController : MonoBehaviour {
 	public int knights;
 	public int monks;
 
-	public MovableObject barbarianFab;
-	public MovableObject knightFab;
-	public MovableObject monkFab;
+	public GameObject barbarianFab;
+	public GameObject knightFab;
+	public GameObject monkFab;
+	public GameObject player;
 
-	List<MovableObject> barray = new List<MovableObject> ();
-	List<MovableObject> karray = new List<MovableObject> ();
-	List<MovableObject> marray = new List<MovableObject> ();
+	List<GameObject> barray = new List<GameObject> ();
+	List<GameObject> karray = new List<GameObject> ();
+	List<GameObject> marray = new List<GameObject> ();
 
 	// Use this for initialization
 	void Start () {
@@ -29,17 +30,20 @@ public class GameController : MonoBehaviour {
 		}
 		for (int i = 0; i < barbarians; i++) {
 			//Create barbarians at random locations
-			Vector3 pos = new Vector3(Random.Range(-10.0f, 10.0f), 0, Random.Range(-10.0f, 10.0f));
-			barray.Add(Instantiate(barbarianFab, pos, Quaternion.identity) as MovableObject);
+			Vector3 pos = new Vector3(Random.Range(-10.0f, 10.0f), 1, Random.Range(-10.0f, 10.0f));
+			GameObject barb = (GameObject)Instantiate(barbarianFab, pos, Quaternion.identity);
+			barray.Add(barb);
 		}
 		for (int i = 0; i < knights; i++) {
 			//Create knights at random locations
-			Vector3 pos = new Vector3(Random.Range(-10.0f, 10.0f), 0, Random.Range(-10.0f, 10.0f));
-			karray.Add(Instantiate(knightFab, pos, Quaternion.identity) as MovableObject);
+			Vector3 pos = new Vector3(Random.Range(-10.0f, 10.0f), 1, Random.Range(-10.0f, 10.0f));
+			GameObject knight = (GameObject)Instantiate(knightFab, pos, Quaternion.identity);
+			karray.Add(knight);
 		}
 		for (int i = 0; i < monks; i++) {
-			Vector3 pos = new Vector3(Random.Range(-10.0f, 10.0f), 0, Random.Range(-10.0f, 10.0f));
-			marray.Add(Instantiate(monkFab, pos, Quaternion.identity) as MovableObject);
+			Vector3 pos = new Vector3(Random.Range(-10.0f, 10.0f), 1, Random.Range(-10.0f, 10.0f));
+			GameObject monk = (GameObject)Instantiate(monkFab, pos, Quaternion.identity);
+			marray.Add(monk);
 			//Create monks at random locations
 		}
 	}
