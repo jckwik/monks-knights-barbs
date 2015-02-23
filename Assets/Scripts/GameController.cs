@@ -13,6 +13,7 @@ public class GameController : MonoBehaviour {
 	public GameObject knightFab;
 	public GameObject monkFab;
 	public GameObject player;
+	public GameObject playerFab;
 
 	List<GameObject> barray = new List<GameObject> ();
 	List<GameObject> karray = new List<GameObject> ();
@@ -24,7 +25,8 @@ public class GameController : MonoBehaviour {
 	}
 
 	void Initialize() {
-
+		Vector3 playerPos = new Vector3 (0, 1, 0);
+		player = (GameObject)Instantiate (playerFab, playerPos, Quaternion.identity);
 		for (int i = 0; i < monastaries; i++) {
 			//Create monastaries
 		}
