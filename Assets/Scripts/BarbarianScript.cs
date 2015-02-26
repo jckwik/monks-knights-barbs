@@ -23,10 +23,12 @@ public class BarbarianScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		findTarget ();
-		lookAt ();
-		velocity += gameController.Wander (this.transform.position, moveSpeed, 40, 10);
+
+		velocity += gameController.Wander (this.transform.position, moveSpeed, 80, 50);
 		
 		velocity *= Time.deltaTime;
+		direction = velocity.normalized * -1;
+		lookAt ();
 		this.transform.position += velocity;
 		velocity = Vector3.zero;
 	
@@ -38,7 +40,7 @@ public class BarbarianScript : MonoBehaviour {
 		}
 	}
 	void lookAt() {
-		direction = target.transform.position - this.transform.position;
+		//direction = this.transform.position;
 		this.transform.LookAt(direction, Vector3.up);
 	}
 }

@@ -14,10 +14,12 @@ public class GameController : MonoBehaviour {
 	public GameObject monkFab;
 	public GameObject player;
 	public GameObject playerFab;
+	public GameObject monastaryFab;
 
 	List<GameObject> barray = new List<GameObject> ();
 	List<GameObject> karray = new List<GameObject> ();
 	List<GameObject> marray = new List<GameObject> ();
+	List<GameObject> monarray = new List<GameObject> ();
 
 	// Use this for initialization
 	void Start () {
