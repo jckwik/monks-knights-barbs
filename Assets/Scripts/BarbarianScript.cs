@@ -10,6 +10,9 @@ public class BarbarianScript : MonoBehaviour {
 	public Vector3 direction;
 	public Vector3 velocity;
 
+	public enum behavior {Seek, Flee, Arrive, Wander, Avoid, Follow};
+	public behavior currentBehavior;
+
 	// Use this for initialization
 	void Start () {
 		GameObject gC = GameObject.Find("Game Controller");
@@ -17,6 +20,7 @@ public class BarbarianScript : MonoBehaviour {
 		moveSpeed = 5;
 		direction = Vector3.zero;
 		velocity = Vector3.zero;
+		currentBehavior = behavior.Wander;
 	
 	}
 	
@@ -24,7 +28,36 @@ public class BarbarianScript : MonoBehaviour {
 	void Update () {
 		findTarget ();
 		lookAt ();
-		velocity += gameController.Wander (this.transform.position, moveSpeed, 40, 10);
+		switch(currentBehavior)
+		{
+			case behavior.Seek:
+				velocity += gameController.Seek(this.transform.position, target.transform.position, moveSpeed);
+				//Debug.Log("Seeking");
+				break;
+
+			case behavior.Flee:
+				velocity += gameController.Flee(this.transform.position, target.transform.position, moveSpeed);
+				//Debug.Log("Fleeing");
+				break;
+
+			case behavior.Arrive:
+				velocity += gameController.Arrive(this.transform.position, target.transform.position, moveSpeed, 15, 5);
+				//Debug.Log("Arriving");
+				break;
+
+			case behavior.Wander:
+				velocity += gameController.Wander (this.transform.position, moveSpeed, 40, 10);
+				//Debug.Log("Wandering");
+				break;
+
+			case behavior.Follow:
+				//Debug.Log("Following");
+				break;
+
+			case behavior.Avoid:
+				//Debug.Log("Avoiding");
+				break;
+		}
 		
 		velocity *= Time.deltaTime;
 		this.transform.position += velocity;
