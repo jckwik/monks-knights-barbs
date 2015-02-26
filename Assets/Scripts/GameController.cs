@@ -49,4 +49,49 @@ public class GameController : MonoBehaviour {
 			//Create monks at random locations
 		}
 	}
+	
+	public Vector3 Seek (Vector3 pos, Vector3 targetPos, float speed)
+	{
+		//find dv, desired velocity
+		Vector3 dv = targetPos - pos;		
+		dv = dv.normalized * speed; 	//scale by maxSpeed
+		dv.y = 0;								// only steer in the x/z plane
+		return dv;
+	}
+	
+	public Vector3 Flee (Vector3 pos, Vector3 targetPos, float speed) {
+		Vector3 dv = pos - targetPos;		
+		dv = dv.normalized * speed; 	//scale by maxSpeed
+		dv.y = 0;								// only steer in the x/z plane
+		return dv;
+	}
+	
+	public Vector3 Arrive (Vector3 pos, Vector3 targetPos, float speed, float slowDistance, float arriveDistance) {
+		Vector3 dv = targetPos - pos;
+		float mag = dv.magnitude;
+		float moveSpeed;
+		if (mag < arriveDistance) { return Vector3.zero; }
+		else if (mag > slowDistance) { moveSpeed = speed; }
+		else {
+			float x = mag / (slowDistance - arriveDistance);
+			moveSpeed = speed * x;
+		}
+		dv = dv.normalized * moveSpeed; 	//scale by maxSpeed
+		dv.y = 0;								// only steer in the x/z plane
+		return dv;		
+	}
+	
+	public Vector3 Wander (Vector3 pos, float speed, float wanderD, float wanderR) {
+		float randomAngle = Random.Range (0, Mathf.PI*2);
+		
+		Vector3 circleLoc = transform.forward;
+		circleLoc *= wanderD;
+		circleLoc += transform.position;
+		
+		
+		Vector3 circleOffSet = new Vector3(Mathf.Cos (randomAngle)*wanderR, 0, Mathf.Sin (randomAngle)*wanderR);
+		Vector3 target = circleLoc + circleOffSet;
+
+		return Seek( pos, target, speed);	
+	}
 }
