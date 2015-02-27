@@ -33,6 +33,7 @@ public class Player : MonoBehaviour {
 		
 		// Check for up and down movement, else float
 		if(Input.GetKey(moveForward)){
+
 			this.transform.Translate(direction * speed * Time.deltaTime);
 		}
 		else if(Input.GetKey(moveBackward)){
@@ -47,7 +48,6 @@ public class Player : MonoBehaviour {
 			this.transform.Translate(Vector3.Cross(direction, Vector3.up) * speed * Time.deltaTime);;
 		}
 
-		//transform.position.y = 1;
 		this.transform.LookAt(direction);
 		//location += velocity;
 		//velocity += acceleration;
