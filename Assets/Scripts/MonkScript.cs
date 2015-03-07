@@ -20,12 +20,15 @@ public class MonkScript : MonoBehaviour {
 	GameObject[] waypoints;
 
 	int avoidFrameCount;
+	public bool leftHit;
+	public bool rightHit;
+	public bool centerHit;
 
 	// Use this for initialization
 	void Start () {
 		GameObject gC = GameObject.Find("Game Controller");
 		gameController = (GameController) gC.GetComponent(typeof(GameController));
-		moveSpeed = 5;
+		moveSpeed = 15;
 		direction = Vector3.zero;
 		velocity = Vector3.zero;
 		currentBehavior = behavior.Follow;
@@ -33,6 +36,10 @@ public class MonkScript : MonoBehaviour {
 		target = waypoints [0];
 		targetIndex = 0;
 		avoidFrameCount = 0;
+		leftHit = false;
+   		rightHit = false;
+   		centerHit = false;
+
 	}
 	
 	// Update is called once per frame
@@ -59,23 +66,44 @@ public class MonkScript : MonoBehaviour {
 				
 			case behavior.Follow:
 				Debug.Log("Following");
-				//velocity += gameController.Follow (this.transform.position, moveSpeed, target.transform.position);
+				velocity += gameController.Follow (this.transform.position, moveSpeed, target.transform.position);
 				direction = target.transform.position - this.transform.position;
 				break;
 				
-			//case behavior.Avoid:
-				//Debug.Log("Avoiding");
-				//direction += gameController.Avoid (this.transform.position, this.transform.forward, direction, this);
-				//break;
+			case behavior.Avoid:
+				Debug.Log("Avoiding");
+				RaycastHit hit = new RaycastHit();
+				if (Physics.Raycast (this.transform.position, this.transform.forward, out hit, 20)) {
+					if(hit.transform != this.transform)
+					{
+						Debug.DrawLine (transform.position, hit.point, Color.red);
+						currentBehavior = behavior.Avoid;
+					}
+					else
+					{
+						centerHit = false;
+					}
+				}
+				else
+				{
+					centerHit = false;
+				}
+				if(!(leftHit || rightHit || centerHit))
+				{
+				Debug.Log("K");
+					currentBehavior = behavior.Follow;
+				}
+				break;
 		}
 		Avoid ();
 		//lookAt ();
 		velocity *= Time.deltaTime;
-		//this.transform.position += velocity;
-		this.transform.Translate(direction.normalized * moveSpeed * Time.deltaTime);
+		this.transform.position += velocity;
 		//this.transform.position += this.transform.forward * moveSpeed * Time.deltaTime;
+		//this.transform.Translate(direction.normalized * moveSpeed * Time.deltaTime);
 		velocity = Vector3.zero;
 		this.transform.position = new Vector3(this.transform.position.x, 1, this.transform.position.z);
+		this.transform.rotation = new Quaternion(0, this.transform.rotation.y, 0, this.transform.rotation.w);
 		targetLoc = target.transform.position;
 	}	
 
@@ -90,13 +118,14 @@ public class MonkScript : MonoBehaviour {
 			if(targetIndex > waypoints.Length - 1)
 			{
 				target = waypoints[0];
+				direction = target.transform.position - this.transform.position;
 				targetIndex = 0;
 			}
 			else
 			{
 				target = waypoints[targetIndex];
+				direction = target.transform.position - this.transform.position;
 			}
-			//currentBehavior = behavior.Avoid;
 		}
 	}
 
@@ -107,10 +136,19 @@ public class MonkScript : MonoBehaviour {
 			if(hit.transform != this.transform)
 			{
 				Debug.DrawLine (transform.position, hit.point, Color.red);
-				direction += hit.normal * 20;
+				//direction += hit.normal * 10;
+				currentBehavior = behavior.Avoid;
+				centerHit = true;
+			}
+			else
+			{
+				centerHit = false;
 			}
 		}
-		
+		else
+		{
+			centerHit = false;
+		}
 		Vector3 leftR = this.transform.position;
 		Vector3 rightR = this.transform.position;
 		
@@ -121,15 +159,35 @@ public class MonkScript : MonoBehaviour {
 			if(hit.transform != this.transform)
 			{
 				Debug.DrawLine (leftR, hit.point, Color.red);
-				direction -= hit.normal * 20;
+				direction += hit.normal * 10;
+				currentBehavior = behavior.Avoid;
+				leftHit = true;
+			}
+			else
+			{
+				leftHit = false;
 			}
 		}
-		else if (Physics.Raycast (rightR, this.transform.forward, out hit, 20)) {
+		else
+		{
+			leftHit = false;
+		}
+		if (Physics.Raycast (rightR, this.transform.forward, out hit, 20)) {
 			if(hit.transform != this.transform)
 			{
 				Debug.DrawLine (rightR, hit.point, Color.red);
-				direction += hit.normal * 20;
+				direction += hit.normal * 10;
+				currentBehavior = behavior.Avoid;
+				rightHit = true;
 			}
+			else
+			{
+				rightHit = false;
+			}
+		}
+		else
+		{
+			rightHit = false;
 		}
 		Quaternion rot = Quaternion.LookRotation (direction);
 		
