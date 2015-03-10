@@ -15,9 +15,9 @@ public class GameController : MonoBehaviour {
 	public GameObject player;
 	public GameObject playerFab;
 
-	List<GameObject> barray = new List<GameObject> ();
-	List<GameObject> karray = new List<GameObject> ();
-	List<GameObject> marray = new List<GameObject> ();
+	public List<GameObject> barray = new List<GameObject> ();
+	public List<GameObject> karray = new List<GameObject> ();
+	public List<GameObject> marray = new List<GameObject> ();
 
 	// Use this for initialization
 	void Start () {
