@@ -1,0 +1,15 @@
+4
+Wander
+Seek
+Flee
+Follow
+5
+I see unguarded monks
+I see more knights than friends
+I see more friends than knights
+I see an unguarded monastery
+I'm all alone
+1 2 3 1 0
+1 2 1 1 0
+1 2 3 1 0
+1 2 3 1 0

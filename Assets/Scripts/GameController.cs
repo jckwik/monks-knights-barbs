@@ -15,6 +15,8 @@ public class GameController : MonoBehaviour {
 	public GameObject player;
 	public GameObject playerFab;
 
+	public StateMachine bStateM;
+
 	public List<GameObject> barray = new List<GameObject> ();
 	public List<GameObject> karray = new List<GameObject> ();
 	public List<GameObject> marray = new List<GameObject> ();
@@ -25,11 +27,16 @@ public class GameController : MonoBehaviour {
 	}
 
 	void Initialize() {
+		Debug.Log ("Running Initialize");
+
 		Vector3 playerPos = new Vector3 (0, 1, 0);
 		player = (GameObject)Instantiate (playerFab, playerPos, Quaternion.identity);
 		for (int i = 0; i < monastaries; i++) {
 			//Create monastaries
 		}
+
+		bStateM = new StateMachine ("BarbarianStateMachine.txt");
+
 		for (int i = 0; i < barbarians; i++) {
 			//Create barbarians at random locations
 			Vector3 pos = new Vector3(Random.Range(-10.0f, 10.0f), 1, Random.Range(-10.0f, 10.0f));

@@ -11,6 +11,9 @@ public class BarbarianScript : MonoBehaviour {
 	public GameController gameController;
 	public Vector3 direction;
 	public Vector3 velocity;
+
+	public StateMachine stM;
+	protected int currentState;
 	
 	public enum behavior {Seek, Flee, Arrive, Wander, Avoid, Follow};
 	public behavior currentBehavior;
@@ -22,16 +25,34 @@ public class BarbarianScript : MonoBehaviour {
 	public int numBInSight;
 	public int numKInSight;
 	public int numMInSight;
-	
+
+	/* State Machine: 
+	 *  -> States:
+	 * 4
+     * 0 Wander
+     * 1 Seek
+     * 2 Flee
+     * 3 Follow
+     *  -> Change inputs:
+     * 5
+     * 0 I see unguarded monks
+     * 1 I see more knights than friends
+     * 2 I see more friends than knights
+     * 3 I see an unguarded monastery
+     * 4 I'm all alone
+	*/
+
 	// Use this for initialization
 	void Start () {
 		GameObject gC = GameObject.Find("Game Controller");
 		gameController = (GameController) gC.GetComponent(typeof(GameController));
+		stM = gameController.bStateM;
 		moveSpeed = 5;
 		sightRange = 50;
 		direction = Vector3.zero;
 		velocity = Vector3.zero;
-		currentBehavior = behavior.Wander;	
+		currentBehavior = behavior.Wander;
+		currentState = 0;
 	}
 	
 	// Update is called once per frame
@@ -39,36 +60,38 @@ public class BarbarianScript : MonoBehaviour {
 		findUnitsInSight();
 		findTarget ();
 		lookAt ();
-		switch(currentBehavior)
-		{
-			case behavior.Seek:
-				velocity += gameController.Seek(this.transform.position, target.transform.position, moveSpeed);
-				//Debug.Log("Seeking");
-				break;
+//		switch(currentBehavior)
+//		{
+//			case behavior.Seek:
+//				velocity += gameController.Seek(this.transform.position, target.transform.position, moveSpeed);
+//				//Debug.Log("Seeking");
+//				break;
+//
+//			case behavior.Flee:
+//				velocity += gameController.Flee(this.transform.position, target.transform.position, moveSpeed);
+//				//Debug.Log("Fleeing");
+//				break;
+//
+//			case behavior.Arrive:
+//				velocity += gameController.Arrive(this.transform.position, target.transform.position, moveSpeed, 15, 5);
+//				//Debug.Log("Arriving");
+//				break;
+//
+//			case behavior.Wander:
+//				velocity += gameController.Wander (this.transform.position, moveSpeed, 40, 10);
+//				//Debug.Log("Wandering");
+//				break;
+//
+//			case behavior.Follow:
+//				//Debug.Log("Following");
+//				break;
+//
+//			case behavior.Avoid:
+//				//Debug.Log("Avoiding");
+//				break;
+//		}
 
-			case behavior.Flee:
-				velocity += gameController.Flee(this.transform.position, target.transform.position, moveSpeed);
-				//Debug.Log("Fleeing");
-				break;
-
-			case behavior.Arrive:
-				velocity += gameController.Arrive(this.transform.position, target.transform.position, moveSpeed, 15, 5);
-				//Debug.Log("Arriving");
-				break;
-
-			case behavior.Wander:
-				velocity += gameController.Wander (this.transform.position, moveSpeed, 40, 10);
-				//Debug.Log("Wandering");
-				break;
-
-			case behavior.Follow:
-				//Debug.Log("Following");
-				break;
-
-			case behavior.Avoid:
-				//Debug.Log("Avoiding");
-				break;
-		}
+		CallAction ();
 		
 		velocity *= Time.deltaTime;
 		this.transform.position += velocity;
@@ -91,7 +114,7 @@ public class BarbarianScript : MonoBehaviour {
 		List<GameObject> barbs = gameController.barray;
 		for (int i=0; i<barbs.Count; i++) {
 			GameObject b = barbs[i];
-			if (b == this) continue;
+			if (b == this.gameObject) continue;
 			
 			// check if they are in range
 			Vector3 diff = b.transform.position - this.transform.position;
@@ -127,9 +150,76 @@ public class BarbarianScript : MonoBehaviour {
 		numBInSight = bInSight.Count;
 		numKInSight = kInSight.Count;
 		numMInSight = mInSight.Count;
+
+		if (numMInSight > 0 && numKInSight == 0) {
+			MakeTrans (0);
+		}
+		else if (numBInSight == 0 && numKInSight == 0 && numMInSight == 0) {
+			MakeTrans (4);
+		}
+		else if (numBInSight > 0 && numKInSight < numBInSight) {
+			MakeTrans (2);
+		}
+		else if (numKInSight > numBInSight) {
+			MakeTrans (1);
+		}
 	}
 	void lookAt() {
 		direction = target.transform.position - this.transform.position;
 		this.transform.LookAt(direction, Vector3.up);
+	}
+	// Use state machine to make a transition and display the input
+	public void MakeTrans(int input)
+	{
+		currentState = stM.MakeTrans (currentState, input);
+		//Debug.Log ("Input"+input + ": " +stM.Inputs[input]);
+	}
+
+	public void CallAction ()
+	{
+		switch (currentState)
+		{
+		case 0:
+			s0Act ();
+			break;
+		case 1:
+			s1Act ();
+			break;
+		case 2:
+			s2Act ();
+			break;
+		case 3:
+			s3Act ();
+			break;
+		default:
+			Debug.Log ("Oops!  Bad state!");
+			break;
+		}
+		return;
+	}
+
+	void s0Act ()
+	{
+		velocity += gameController.Wander (this.transform.position, moveSpeed, 40, 10);
+		//Debug.Log ("State0: I'm just wandering.");
+	}
+	void s1Act ()
+	{
+		//Find a target
+		target = mInSight [0];
+		velocity += gameController.Seek(this.transform.position, target.transform.position, moveSpeed);
+		//Debug.Log ("State1: I'm chasing something!");
+	}
+	void s2Act ()
+	{
+		//Find a target
+		target = kInSight [0];
+		velocity += gameController.Flee(this.transform.position, target.transform.position, moveSpeed);
+		//Debug.Log ("State2: Running away!");
+	}
+	void s3Act ()
+	{
+		//Follow?
+		//Debug.Log ("State3: I'm following others.");
 	}
 }

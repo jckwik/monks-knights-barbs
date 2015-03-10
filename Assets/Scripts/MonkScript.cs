@@ -76,13 +76,13 @@ public class MonkScript : MonoBehaviour {
 				break;
 				
 			case behavior.Follow:
-				Debug.Log("Following");
+				//Debug.Log("Following");
 				velocity += gameController.Follow (this.transform.position, moveSpeed, target.transform.position);
 				direction = target.transform.position - this.transform.position;
 				break;
 				
 			case behavior.Avoid:
-				Debug.Log("Avoiding");
+				//Debug.Log("Avoiding");
 				RaycastHit hit = new RaycastHit();
 				if (Physics.Raycast (this.transform.position, this.transform.forward, out hit, 20)) {
 					if(hit.transform != this.transform)
@@ -101,7 +101,7 @@ public class MonkScript : MonoBehaviour {
 				}
 				if(!(leftHit || rightHit || centerHit))
 				{
-				Debug.Log("K");
+				//Debug.Log("K");
 					currentBehavior = behavior.Follow;
 				}
 				break;
