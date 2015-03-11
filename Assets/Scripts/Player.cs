@@ -3,12 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Player : MonoBehaviour {
-	public KeyCode moveForward;
-	public KeyCode moveBackward;
-	public KeyCode moveLeft;
-	public KeyCode moveRight;
+	public KeyCode moveForward = KeyCode.W;
+	public KeyCode moveBackward = KeyCode.S;
+	public KeyCode moveLeft = KeyCode.A;
+	public KeyCode moveRight = KeyCode.D;
 
-	public float speed;
+	public float speed = 5.0f;
 	public Vector3 direction;
 	
 	//public GameObject mainCam;
@@ -49,6 +49,8 @@ public class Player : MonoBehaviour {
 		}
 
 		this.transform.LookAt(direction);
+		this.transform.position = new Vector3(this.transform.position.x, 1, this.transform.position.z);
+		this.transform.rotation = new Quaternion(0, this.transform.rotation.y, 0, this.transform.rotation.w);
 		//location += velocity;
 		//velocity += acceleration;
 	}

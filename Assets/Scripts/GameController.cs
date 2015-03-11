@@ -40,18 +40,18 @@ public class GameController : MonoBehaviour {
 
 		for (int i = 0; i < barbarians; i++) {
 			//Create barbarians at random locations
-			Vector3 pos = new Vector3(Random.Range(-10.0f, 10.0f), 1, Random.Range(-10.0f, 10.0f));
+			Vector3 pos = new Vector3(Random.Range(-100.0f, 100.0f), 1, Random.Range(-100.0f, 100.0f));
 			GameObject barb = (GameObject)Instantiate(barbarianFab, pos, Quaternion.identity);
 			barray.Add(barb);
 		}
 		for (int i = 0; i < knights; i++) {
 			//Create knights at random locations
-			Vector3 pos = new Vector3(Random.Range(-10.0f, 10.0f), 1, Random.Range(-10.0f, 10.0f));
+			Vector3 pos = new Vector3(Random.Range(-100.0f, 100.0f), 1, Random.Range(-100.0f, 100.0f));
 			GameObject knight = (GameObject)Instantiate(knightFab, pos, Quaternion.identity);
 			karray.Add(knight);
 		}
 		for (int i = 0; i < monks; i++) {
-			Vector3 pos = new Vector3(Random.Range(-10.0f, 10.0f), 1, Random.Range(-10.0f, 10.0f));
+			Vector3 pos = new Vector3(Random.Range(-100.0f, 100.0f), 1, Random.Range(-100.0f, 100.0f));
 			GameObject monk = (GameObject)Instantiate(monkFab, pos, Quaternion.identity);
 			marray.Add(monk);
 			//Create monks at random locations

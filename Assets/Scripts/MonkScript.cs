@@ -87,7 +87,7 @@ public class MonkScript : MonoBehaviour {
 				if (Physics.Raycast (this.transform.position, this.transform.forward, out hit, 20)) {
 					if(hit.transform != this.transform)
 					{
-						Debug.DrawLine (transform.position, hit.point, Color.red);
+						Debug.DrawLine (transform.position, hit.point, Color.green);
 						currentBehavior = behavior.Avoid;
 					}
 					else
@@ -193,7 +193,7 @@ public class MonkScript : MonoBehaviour {
 		if (Physics.Raycast (this.transform.position, this.transform.forward, out hit, 20)) {
 			if(hit.transform != this.transform)
 			{
-				Debug.DrawLine (transform.position, hit.point, Color.red);
+				Debug.DrawLine (transform.position, hit.point, Color.green);
 				//direction += hit.normal * 10;
 				currentBehavior = behavior.Avoid;
 				centerHit = true;
@@ -216,7 +216,7 @@ public class MonkScript : MonoBehaviour {
 		if (Physics.Raycast (leftR, this.transform.forward, out hit, 20)) {
 			if(hit.transform != this.transform)
 			{
-				Debug.DrawLine (leftR, hit.point, Color.red);
+				Debug.DrawLine (leftR, hit.point, Color.green);
 				direction += hit.normal * 10;
 				currentBehavior = behavior.Avoid;
 				leftHit = true;
@@ -233,7 +233,7 @@ public class MonkScript : MonoBehaviour {
 		if (Physics.Raycast (rightR, this.transform.forward, out hit, 20)) {
 			if(hit.transform != this.transform)
 			{
-				Debug.DrawLine (rightR, hit.point, Color.red);
+				Debug.DrawLine (rightR, hit.point, Color.green);
 				direction += hit.normal * 10;
 				currentBehavior = behavior.Avoid;
 				rightHit = true;

@@ -13,7 +13,7 @@ public class BarbarianScript : MonoBehaviour {
 	public Vector3 velocity;
 
 	public StateMachine stM;
-	protected int currentState;
+	public int currentState;
 	
 	public enum behavior {Seek, Flee, Arrive, Wander, Avoid, Follow};
 	public behavior currentBehavior;
@@ -59,7 +59,6 @@ public class BarbarianScript : MonoBehaviour {
 	void Update () {
 		findUnitsInSight();
 		findTarget ();
-		lookAt ();
 //		switch(currentBehavior)
 //		{
 //			case behavior.Seek:
@@ -95,7 +94,9 @@ public class BarbarianScript : MonoBehaviour {
 		
 		velocity *= Time.deltaTime;
 		this.transform.position += velocity;
+		lookAt ();
 		velocity = Vector3.zero;
+		Debug.DrawLine (this.transform.position, direction, Color.red);
 		this.transform.position = new Vector3(this.transform.position.x, 1, this.transform.position.z);
 		this.transform.rotation = new Quaternion(0, this.transform.rotation.y, 0, this.transform.rotation.w);
 	}
@@ -158,16 +159,16 @@ public class BarbarianScript : MonoBehaviour {
 		else if (numBInSight == 0 && numKInSight == 0 && numMInSight == 0) {
 			MakeTrans (4);
 		}
-		else if (numBInSight > 0 && numKInSight < numBInSight) {
+		else if (numBInSight > 0 && numKInSight < numBInSight + 2) {
 			MakeTrans (2);
 		}
-		else if (numKInSight > numBInSight) {
+		else if (numKInSight > numBInSight + 2) {
 			MakeTrans (1);
 		}
 	}
 	void lookAt() {
-		direction = target.transform.position - this.transform.position;
-		this.transform.LookAt(direction, Vector3.up);
+		//direction = target.transform.position - this.transform.position;
+		this.transform.LookAt(velocity, Vector3.up);
 	}
 	// Use state machine to make a transition and display the input
 	public void MakeTrans(int input)
@@ -207,20 +208,31 @@ public class BarbarianScript : MonoBehaviour {
 	void s1Act ()
 	{
 		//Find a target
-		target = mInSight [0];
-		velocity += gameController.Seek(this.transform.position, target.transform.position, moveSpeed);
+		if (numMInSight > 0) {
+			target = mInSight [0];
+			velocity += gameController.Seek (this.transform.position, target.transform.position, moveSpeed);
+		} else 
+			MakeTrans (4);
 		//Debug.Log ("State1: I'm chasing something!");
 	}
 	void s2Act ()
 	{
 		//Find a target
-		target = kInSight [0];
-		velocity += gameController.Flee(this.transform.position, target.transform.position, moveSpeed);
+		if (numKInSight > 0) {
+			target = kInSight [0];
+			velocity += gameController.Flee (this.transform.position, target.transform.position, moveSpeed);
+		} else
+			MakeTrans (4);
 		//Debug.Log ("State2: Running away!");
 	}
 	void s3Act ()
 	{
 		//Follow?
+		if (numBInSight > 0) {
+			target = bInSight [0];
+			velocity += gameController.Arrive (this.transform.position, target.transform.position, moveSpeed, 20, 5);
+		} else
+			MakeTrans (4);
 		//Debug.Log ("State3: I'm following others.");
 	}
 }

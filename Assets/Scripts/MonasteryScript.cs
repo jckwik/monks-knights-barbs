@@ -21,7 +21,7 @@ public class MonasteryScript : MonoBehaviour {
 		foreach(GameObject b in barray)
 		{
 			if(Mathf.Sqrt((b.transform.position.x - this.transform.position.x) * (b.transform.position.x - this.transform.position.x)
-			              + (b.transform.position.y - this.transform.position.y) * (b.transform.position.y - this.transform.position.y)) < 25)
+			              + (b.transform.position.z - this.transform.position.z) * (b.transform.position.z - this.transform.position.z)) < 25)
 			{
 				underAttack = true;
 			}
