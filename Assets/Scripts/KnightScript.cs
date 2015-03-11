@@ -8,11 +8,13 @@ public class KnightScript : MonoBehaviour {
 	public float rotationSpeed;
 	public float sightRange;
 	public GameObject target;
+	public int targetIndex;
 	public GameController gameController;
 	public Vector3 direction;
 	public Vector3 velocity;
+	public DecisionTree decisionTree;
 
-	public enum behavior {Seek, Flee, Arrive, Wander, Avoid, Follow};
+	public enum behavior {AttackNearbyBarb, ArriveAtAttackedMonastery, ArriveAtARandomMonastery};
 	public behavior currentBehavior;
 	
 	List<GameObject> bInSight = new List<GameObject> ();
@@ -28,46 +30,45 @@ public class KnightScript : MonoBehaviour {
 	void Start () {
 		GameObject gC = GameObject.Find("Game Controller");
 		gameController = (GameController) gC.GetComponent(typeof(GameController));
+		GameObject dT = GameObject.Find("DecisionTree");
+		decisionTree = (DecisionTree) dT.GetComponent(typeof(DecisionTree));
 		moveSpeed = 5;
 		sightRange = 50;
 		direction = Vector3.zero;
 		velocity = Vector3.zero;
-		currentBehavior = behavior.Arrive;
+		currentBehavior = behavior.ArriveAtARandomMonastery;
+		target = gameController.monasteryArray[Random.Range(0, gameController.monasteryArray.Length - 1)];
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		findUnitsInSight();
-		findTarget ();
+		//findTarget ();
+		currentBehavior = makeDec();
 		lookAt ();
 		switch(currentBehavior)
 		{
-			case behavior.Seek:
+			case behavior.AttackNearbyBarb:
+				barbarianNearby();
 				velocity += gameController.Seek(this.transform.position, target.transform.position, moveSpeed);
 				break;
 
-			case behavior.Flee:
-				velocity += gameController.Flee(this.transform.position, target.transform.position, moveSpeed);
+			case behavior.ArriveAtAttackedMonastery:
+				attackedMonastery();
+				velocity += gameController.Arrive(this.transform.position, target.transform.position, moveSpeed, 40, 20);
 				break;
 
-			case behavior.Arrive:
-				velocity += gameController.Arrive(this.transform.position, target.transform.position, moveSpeed, 15, 5);
-				break;
-
-			case behavior.Wander:
-				velocity += gameController.Wander (this.transform.position, moveSpeed, 40, 10);
-				break;
-
-			case behavior.Follow:
-				break;
-
-			case behavior.Avoid:
+			case behavior.ArriveAtARandomMonastery:
+				velocity += gameController.Arrive(this.transform.position, target.transform.position, moveSpeed, 40, 20);
 				break;
 		}
 		
 		velocity *= Time.deltaTime;
 		this.transform.position += velocity;
 		velocity = Vector3.zero;
+		Debug.DrawLine (this.transform.position, direction, Color.blue);
+		this.transform.position = new Vector3(this.transform.position.x, 1, this.transform.position.z);
+		this.transform.rotation = new Quaternion(0, this.transform.rotation.y, 0, this.transform.rotation.w);
 	}
 
 	void findTarget() {
@@ -123,7 +124,101 @@ public class KnightScript : MonoBehaviour {
 		numMInSight = mInSight.Count;
 	}
 	void lookAt() {
-		direction = target.transform.position - this.transform.position;
-		this.transform.LookAt(direction, Vector3.up);
+		direction = Vector3.Normalize(target.transform.position - this.transform.position);
+		//this.transform.LookAt(direction, Vector3.up);
+		Quaternion rot = Quaternion.LookRotation (direction);
+		this.transform.rotation = Quaternion.Slerp (transform.rotation, rot, Time.deltaTime);
+	}
+	
+	behavior makeDec()
+	{
+		/*
+		Node currNode = decisionTree.Root;
+		while (currNode.NoPtr != null) // Will never backtrack => don't need recursion
+		{
+			if (currNode.Test())
+				currNode = currNode.YesPtr;   // Recurse on "yes" child
+			else
+				currNode = currNode.NoPtr;    // or "no" child
+		}
+		*/
+		if(attackedMonastery())
+		{
+			if(atAttackedMonastery())
+			{
+				return behavior.AttackNearbyBarb;
+			}
+			else
+			{
+				return behavior.ArriveAtAttackedMonastery;
+			}
+		}
+		else
+		{
+			if(barbarianNearby())
+			{
+				return behavior.AttackNearbyBarb;
+			}
+			else
+			{
+				if(currentBehavior == behavior.ArriveAtARandomMonastery)
+				{
+					target = gameController.monasteryArray[targetIndex];
+					return behavior.ArriveAtARandomMonastery;
+				}
+				else
+				{
+					targetIndex = Random.Range(0, gameController.monasteryArray.Length - 1);
+					target = gameController.monasteryArray[targetIndex];
+				}
+				return behavior.ArriveAtARandomMonastery;
+			}
+		}
+	}
+
+	bool attackedMonastery()
+	{
+		foreach(GameObject m in gameController.monasteryArray)
+		{
+			MonasteryScript monScript = (MonasteryScript) m.GetComponent(typeof(MonasteryScript));
+			if(monScript.underAttack == true)
+			{
+				target = m;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool atAttackedMonastery()
+	{
+		foreach(GameObject m in gameController.monasteryArray)
+		{
+			MonasteryScript monScript = (MonasteryScript) m.GetComponent(typeof(MonasteryScript));
+			if(monScript.underAttack == true)
+			{
+				if(Mathf.Sqrt((m.transform.position.x - this.transform.position.x) * (m.transform.position.x - this.transform.position.x)
+				              + (m.transform.position.z - this.transform.position.z) * (m.transform.position.z - this.transform.position.z)) < 40)
+				{
+					target = m;
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	bool barbarianNearby()
+	{
+		foreach(GameObject b in gameController.barray)
+		{
+			if(Mathf.Sqrt((b.transform.position.x - this.transform.position.x) * (b.transform.position.x - this.transform.position.x)
+			              + (b.transform.position.z - this.transform.position.z) * (b.transform.position.z - this.transform.position.z)) < 40)
+			{
+				target = b;
+				return true;
+			}
+		}
+		return false;
 	}
 }

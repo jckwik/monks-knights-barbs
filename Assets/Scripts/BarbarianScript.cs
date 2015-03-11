@@ -96,7 +96,8 @@ public class BarbarianScript : MonoBehaviour {
 		velocity *= Time.deltaTime;
 		this.transform.position += velocity;
 		velocity = Vector3.zero;
-	
+		this.transform.position = new Vector3(this.transform.position.x, 1, this.transform.position.z);
+		this.transform.rotation = new Quaternion(0, this.transform.rotation.y, 0, this.transform.rotation.w);
 	}
 	
 	void findTarget() {

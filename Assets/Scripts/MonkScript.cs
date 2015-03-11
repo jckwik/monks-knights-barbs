@@ -42,7 +42,7 @@ public class MonkScript : MonoBehaviour {
 		direction = Vector3.zero;
 		velocity = Vector3.zero;
 		currentBehavior = behavior.Follow;
-		waypoints = GameObject.FindGameObjectsWithTag ("Waypoint");
+		waypoints = GameObject.FindGameObjectsWithTag ("Monastery");
 		target = waypoints [0];
 		targetIndex = 0;
 		avoidFrameCount = 0;

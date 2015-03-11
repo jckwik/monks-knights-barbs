@@ -20,7 +20,8 @@ public class GameController : MonoBehaviour {
 	public List<GameObject> barray = new List<GameObject> ();
 	public List<GameObject> karray = new List<GameObject> ();
 	public List<GameObject> marray = new List<GameObject> ();
-
+	public GameObject[] monasteryArray;
+	
 	// Use this for initialization
 	void Start () {
 		Initialize ();
@@ -55,6 +56,7 @@ public class GameController : MonoBehaviour {
 			marray.Add(monk);
 			//Create monks at random locations
 		}
+		monasteryArray = GameObject.FindGameObjectsWithTag("Monastery");
 	}
 	
 	public Vector3 Seek (Vector3 pos, Vector3 targetPos, float speed)
