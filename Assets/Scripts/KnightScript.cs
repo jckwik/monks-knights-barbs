@@ -45,7 +45,6 @@ public class KnightScript : MonoBehaviour {
 		findUnitsInSight();
 		//findTarget ();
 		currentBehavior = makeDec();
-		lookAt ();
 		switch(currentBehavior)
 		{
 			case behavior.AttackNearbyBarb:
@@ -68,6 +67,7 @@ public class KnightScript : MonoBehaviour {
 		velocity = Vector3.zero;
 		Debug.DrawLine (this.transform.position, direction, Color.blue);
 		this.transform.position = new Vector3(this.transform.position.x, 1, this.transform.position.z);
+		lookAt ();
 		this.transform.rotation = new Quaternion(0, this.transform.rotation.y, 0, this.transform.rotation.w);
 	}
 
@@ -125,9 +125,7 @@ public class KnightScript : MonoBehaviour {
 	}
 	void lookAt() {
 		direction = Vector3.Normalize(target.transform.position - this.transform.position);
-		//this.transform.LookAt(direction, Vector3.up);
-		Quaternion rot = Quaternion.LookRotation (direction);
-		this.transform.rotation = Quaternion.Slerp (transform.rotation, rot, Time.deltaTime);
+		this.transform.LookAt(target.transform.position, Vector3.up);
 	}
 	
 	behavior makeDec()
@@ -210,6 +208,7 @@ public class KnightScript : MonoBehaviour {
 
 	bool barbarianNearby()
 	{
+		/*
 		foreach(GameObject b in gameController.barray)
 		{
 			if(Mathf.Sqrt((b.transform.position.x - this.transform.position.x) * (b.transform.position.x - this.transform.position.x)
@@ -218,6 +217,11 @@ public class KnightScript : MonoBehaviour {
 				target = b;
 				return true;
 			}
+		}*/
+		if (bInSight.Count > 0)
+		{
+			target = bInSight[0];
+			return true;
 		}
 		return false;
 	}
