@@ -33,8 +33,15 @@ public class MonkScript : MonoBehaviour {
 	public int numKInSight;
 	public int numMInSight;
 
+	NavMeshAgent agent;
+	Rigidbody rb;
+
+	//Vector3 lastPos;
+
 	// Use this for initialization
 	void Start () {
+		agent = GetComponent<NavMeshAgent> ();
+		rb = GetComponent<Rigidbody> ();
 		GameObject gC = GameObject.Find("Game Controller");
 		gameController = (GameController) gC.GetComponent(typeof(GameController));
 		moveSpeed = 15;
@@ -49,14 +56,16 @@ public class MonkScript : MonoBehaviour {
 		leftHit = false;
    		rightHit = false;
    		centerHit = false;
-
+		//lastPos = this.transform.position;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		findUnitsInSight();
-		//DetermineBehavior ();
 		findTarget ();
+		agent.SetDestination (target.transform.position);
+		//DetermineBehavior ();
+		/*
 		switch(currentBehavior)
 		{
 			case behavior.Seek:
@@ -106,16 +115,18 @@ public class MonkScript : MonoBehaviour {
 				}
 				break;
 		}
-		Avoid ();
-		//lookAt ();
-		velocity *= Time.deltaTime;
-		this.transform.position += velocity;
+		*/
+		//Avoid ();
+		lookAt ();
+		//velocity *= Time.deltaTime;
+		//this.transform.position += velocity;
 		//this.transform.position += this.transform.forward * moveSpeed * Time.deltaTime;
 		//this.transform.Translate(direction.normalized * moveSpeed * Time.deltaTime);
-		velocity = Vector3.zero;
+		//velocity = Vector3.zero;
 		this.transform.position = new Vector3(this.transform.position.x, 1, this.transform.position.z);
-		this.transform.rotation = new Quaternion(0, this.transform.rotation.y, 0, this.transform.rotation.w);
-		targetLoc = target.transform.position;
+		//this.transform.rotation = new Quaternion(0, this.transform.rotation.y, 0, this.transform.rotation.w);
+		//targetLoc = target.transform.position;
+		//lastPos = this.transform.position;
 	}	
 	
 	void findUnitsInSight() {
@@ -268,6 +279,8 @@ public class MonkScript : MonoBehaviour {
 
 	void lookAt() {
 		//direction = target.transform.position - this.transform.position;
-		this.transform.LookAt(direction, Vector3.up);
+		//direction = this.transform.position - lastPos;
+		//this.transform.LookAt(agent.rigidbody.velocity, Vector3.up);
+		transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(target.transform.position), rotationSpeed * Time.deltaTime);
 	}
 }
