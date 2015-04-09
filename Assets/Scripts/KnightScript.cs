@@ -25,6 +25,8 @@ public class KnightScript : MonoBehaviour {
 	public int numKInSight;
 	public int numMInSight;
 	
+	public bool alive;
+	public float hitChance;
 
 	// Use this for initialization
 	void Start () {
@@ -38,10 +40,13 @@ public class KnightScript : MonoBehaviour {
 		velocity = Vector3.zero;
 		currentBehavior = behavior.ArriveAtARandomMonastery;
 		target = gameController.monasteryArray[Random.Range(0, gameController.monasteryArray.Length - 1)];
+		alive = true;
+		hitChance = 25;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		hitChance = 25 + numKInSight * 15;
 		findUnitsInSight();
 		//findTarget ();
 		currentBehavior = makeDec();
@@ -65,7 +70,7 @@ public class KnightScript : MonoBehaviour {
 		velocity *= Time.deltaTime;
 		this.transform.position += velocity;
 		velocity = Vector3.zero;
-		Debug.DrawLine (this.transform.position, direction, Color.blue);
+		Debug.DrawLine (this.transform.position, target.transform.position, Color.blue);
 		this.transform.position = new Vector3(this.transform.position.x, 1, this.transform.position.z);
 		lookAt ();
 		this.transform.rotation = new Quaternion(0, this.transform.rotation.y, 0, this.transform.rotation.w);

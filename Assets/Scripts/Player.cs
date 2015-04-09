@@ -18,15 +18,15 @@ public class Player : MonoBehaviour {
 
 	//public GameObject mainCam;
 
-	Vector2 location;
-	Vector2 velocity;
-	Vector2 acceleration;
+	//Vector2 location;
+	//Vector2 velocity;
+	//Vector2 acceleration;
 	
 	// Use this for initialization
 	void Start () {
-		location = Vector2.zero;
-		velocity = Vector2.zero;
-		acceleration = Vector2.zero;
+		//location = Vector2.zero;
+		//velocity = Vector2.zero;
+		//acceleration = Vector2.zero;
 
 		cam = Camera.main;
 		direction = new Vector3 (1, 0, 0);
@@ -41,28 +41,27 @@ public class Player : MonoBehaviour {
 		
 		// Check for up and down movement, else float
 		if(Input.GetKey(moveForward)){
-
-			this.transform.Translate(this.transform.forward * speed * Time.deltaTime, cam.transform);
+			this.transform.Translate(Vector3.forward * speed * Time.deltaTime, cam.transform);
 		}
 		else if(Input.GetKey(moveBackward)){
-			this.transform.Translate(this.transform.forward * -1f * speed * Time.deltaTime, cam.transform);
+			this.transform.Translate(Vector3.forward * -1f * speed * Time.deltaTime, cam.transform);
 		}
 		
 		// Check for left and right movement
 		if(Input.GetKey(moveRight)){
-			this.transform.Translate(Vector3.Cross(-this.transform.forward, Vector3.up) * speed * Time.deltaTime, cam.transform);
+			this.transform.Translate(Vector3.Cross(-Vector3.forward, Vector3.up) * speed * Time.deltaTime, cam.transform);
 		}
 		else if(Input.GetKey(moveLeft)){
-			this.transform.Translate(Vector3.Cross(this.transform.forward, Vector3.up) * speed * Time.deltaTime, cam.transform);
+			this.transform.Translate(Vector3.Cross(Vector3.forward, Vector3.up) * speed * Time.deltaTime, cam.transform);
 		}
 
 		if (Input.GetKey (turnLeft)) {
-			this.transform.Rotate (Vector3.down * Time.deltaTime * turnSpeed);
-			Debug.Log("Turning Left");
+			this.transform.Rotate (Vector3.down * Time.deltaTime * 100);
+			//Debug.Log("Turning Left");
 		}
 		else if (Input.GetKey (turnRight)) {
-			this.transform.Rotate (Vector3.up * Time.deltaTime * turnSpeed);
-			Debug.Log("Turning Right");
+			this.transform.Rotate (Vector3.up * Time.deltaTime * 100);
+			//Debug.Log("Turning Right");
 		}
 
 		//this.transform.LookAt(direction);

@@ -26,6 +26,9 @@ public class BarbarianScript : MonoBehaviour {
 	public int numKInSight;
 	public int numMInSight;
 
+	public bool alive;
+	public float hitChance;
+
 	/* State Machine: 
 	 *  -> States:
 	 * 4
@@ -53,6 +56,8 @@ public class BarbarianScript : MonoBehaviour {
 		velocity = Vector3.zero;
 		currentBehavior = behavior.Wander;
 		currentState = 0;
+		alive = true;
+		hitChance = 40;
 	}
 	
 	// Update is called once per frame
@@ -96,7 +101,7 @@ public class BarbarianScript : MonoBehaviour {
 		this.transform.position += velocity;
 		lookAt ();
 		velocity = Vector3.zero;
-		Debug.DrawLine (this.transform.position, direction, Color.red);
+		Debug.DrawLine (this.transform.position, target.transform.position, Color.red);
 		this.transform.position = new Vector3(this.transform.position.x, 1, this.transform.position.z);
 		this.transform.rotation = new Quaternion(0, this.transform.rotation.y, 0, this.transform.rotation.w);
 	}
