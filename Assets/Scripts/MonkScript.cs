@@ -36,14 +36,12 @@ public class MonkScript : MonoBehaviour {
 	public bool alive;
 
 	NavMeshAgent agent;
-	//Rigidbody rb;
 
 	//Vector3 lastPos;
 
 	// Use this for initialization
 	void Start () {
 		agent = GetComponent<NavMeshAgent> ();
-		//rb = GetComponent<Rigidbody> ();
 		GameObject gC = GameObject.Find("Game Controller");
 		gameController = (GameController) gC.GetComponent(typeof(GameController));
 		moveSpeed = 15;
@@ -54,11 +52,9 @@ public class MonkScript : MonoBehaviour {
 		waypoints = GameObject.FindGameObjectsWithTag ("Monastery");
 		target = waypoints [0];
 		targetIndex = 0;
-		//avoidFrameCount = 0;
 		leftHit = false;
    		rightHit = false;
    		centerHit = false;
-		//lastPos = this.transform.position;
 		alive = true;
 	}
 	
@@ -111,7 +107,7 @@ public class MonkScript : MonoBehaviour {
 				}
 				if(!(leftHit || rightHit || centerHit))
 				{
-				//Debug.Log("K");
+				        //Debug.Log("K");
 					currentBehavior = behavior.Follow;
 				}
 				break;
