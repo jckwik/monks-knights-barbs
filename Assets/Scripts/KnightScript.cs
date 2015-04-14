@@ -43,10 +43,10 @@ public class KnightScript : MonoBehaviour {
 		alive = true;
 		hitChance = 25;
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-		hitChance = 25 + numKInSight * 15;
+		hitChance = 25 + 25 * Mathf.Log(numKInSight);
 		findUnitsInSight();
 		//findTarget ();
 		currentBehavior = makeDec();

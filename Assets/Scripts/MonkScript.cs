@@ -15,12 +15,12 @@ public class MonkScript : MonoBehaviour {
 
 	public Vector3 targetLoc;
 
-	public enum behavior {Seek, Flee, Arrive, Wander, Avoid, Follow};
+	public enum behavior {Seek, Flee, Wander, Follow, Avoid};
 	public behavior currentBehavior;
 
 	GameObject[] waypoints;
 
-	int avoidFrameCount;
+	//int avoidFrameCount;
 	public bool leftHit;
 	public bool rightHit;
 	public bool centerHit;
@@ -33,15 +33,17 @@ public class MonkScript : MonoBehaviour {
 	public int numKInSight;
 	public int numMInSight;
 
+	public bool alive;
+
 	NavMeshAgent agent;
-	Rigidbody rb;
+	//Rigidbody rb;
 
 	//Vector3 lastPos;
 
 	// Use this for initialization
 	void Start () {
 		agent = GetComponent<NavMeshAgent> ();
-		rb = GetComponent<Rigidbody> ();
+		//rb = GetComponent<Rigidbody> ();
 		GameObject gC = GameObject.Find("Game Controller");
 		gameController = (GameController) gC.GetComponent(typeof(GameController));
 		moveSpeed = 15;
@@ -52,44 +54,43 @@ public class MonkScript : MonoBehaviour {
 		waypoints = GameObject.FindGameObjectsWithTag ("Monastery");
 		target = waypoints [0];
 		targetIndex = 0;
-		avoidFrameCount = 0;
+		//avoidFrameCount = 0;
 		leftHit = false;
    		rightHit = false;
    		centerHit = false;
 		//lastPos = this.transform.position;
+		alive = true;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		findUnitsInSight();
-		findTarget ();
-		agent.SetDestination (target.transform.position);
-		//DetermineBehavior ();
-		/*
+		FindUnitsInSight();
+		//agent.SetDestination (target.transform.position);
+		DetermineBehavior ();
 		switch(currentBehavior)
 		{
 			case behavior.Seek:
-				velocity += gameController.Seek(this.transform.position, target.transform.position, moveSpeed);
+				//velocity += gameController.Seek(this.transform.position, target.transform.position, moveSpeed);
+				agent.SetDestination (target.transform.position);
 				break;
 				
 			case behavior.Flee:
-				velocity += gameController.Flee(this.transform.position, target.transform.position, moveSpeed);
-				break;
-				
-			case behavior.Arrive:
-				velocity += gameController.Arrive(this.transform.position, target.transform.position, moveSpeed, 15, 5);
+				//velocity += gameController.Flee(this.transform.position, target.transform.position, moveSpeed);
+				agent.SetDestination (target.transform.position - this.transform.position);
 				break;
 				
 			case behavior.Wander:
 				velocity += gameController.Wander (this.transform.position, moveSpeed, 40, 10);
+				velocity *= Time.deltaTime;
+				this.transform.position += velocity;
 				break;
 				
 			case behavior.Follow:
 				//Debug.Log("Following");
-				velocity += gameController.Follow (this.transform.position, moveSpeed, target.transform.position);
-				direction = target.transform.position - this.transform.position;
+				FindTarget ();
+				agent.SetDestination (target.transform.position);
 				break;
-				
+
 			case behavior.Avoid:
 				//Debug.Log("Avoiding");
 				RaycastHit hit = new RaycastHit();
@@ -114,22 +115,21 @@ public class MonkScript : MonoBehaviour {
 					currentBehavior = behavior.Follow;
 				}
 				break;
+
 		}
-		*/
 		//Avoid ();
-		lookAt ();
+		LookAt ();
 		//velocity *= Time.deltaTime;
 		//this.transform.position += velocity;
 		//this.transform.position += this.transform.forward * moveSpeed * Time.deltaTime;
 		//this.transform.Translate(direction.normalized * moveSpeed * Time.deltaTime);
-		//velocity = Vector3.zero;
+		velocity = Vector3.zero;
+		//Lock y position and x and z rotation
 		this.transform.position = new Vector3(this.transform.position.x, 1, this.transform.position.z);
-		//this.transform.rotation = new Quaternion(0, this.transform.rotation.y, 0, this.transform.rotation.w);
-		//targetLoc = target.transform.position;
-		//lastPos = this.transform.position;
+		this.transform.rotation = new Quaternion(0, this.transform.rotation.y, 0, this.transform.rotation.w);
 	}	
 	
-	void findUnitsInSight() {
+	void FindUnitsInSight() {
 		// clear the arrays
 		bInSight.Clear();
 		kInSight.Clear();
@@ -142,7 +142,7 @@ public class MonkScript : MonoBehaviour {
 			
 			// check if they are in range
 			Vector3 diff = b.transform.position - this.transform.position;
-			if (diff.magnitude <= sightRange) {
+			if (diff.magnitude <= 2*sightRange/3) {
 				bInSight.Add(b);
 			}
 		}
@@ -176,7 +176,7 @@ public class MonkScript : MonoBehaviour {
 		numKInSight = kInSight.Count;
 		numMInSight = mInSight.Count;
 	}
-	void findTarget() {
+	void FindTarget() {
 		//if (target == null) {
 		//	target = gameController.player;
 		//}
@@ -264,23 +264,63 @@ public class MonkScript : MonoBehaviour {
 		this.transform.position += this.transform.forward * moveSpeed * Time.deltaTime;
 	}
 
-	void DetermineBehavior()
-	{
-		//Determine when avoiding should stop and following should resume
-		/*if (currentBehavior == behavior.Avoid) {
-			avoidFrameCount++;
-			if(avoidFrameCount >= 180)
-			{
-				currentBehavior = behavior.Follow;
-				avoidFrameCount = 0;
-			}
-		}*/
+	void LookAt() {
+		transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(target.transform.position), rotationSpeed * Time.deltaTime);
 	}
 
-	void lookAt() {
-		//direction = target.transform.position - this.transform.position;
-		//direction = this.transform.position - lastPos;
-		//this.transform.LookAt(agent.rigidbody.velocity, Vector3.up);
-		transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(target.transform.position), rotationSpeed * Time.deltaTime);
+	void DetermineBehavior()
+	{
+		//If Barbarian is too close
+		if(numBInSight > 0)
+		{
+			//Flee
+			currentBehavior = behavior.Flee;
+
+			//Find closest Barbarian
+			float closestDist = float.MaxValue;
+			foreach(GameObject b in bInSight)
+			{
+				Vector3 diff = b.transform.position - this.transform.position;
+				if(diff.magnitude < closestDist)
+				{
+					closestDist = diff.magnitude;
+					target = b;
+				}
+			}
+			//Check its direction
+
+			//Move opposite
+
+		}
+		else{
+			//Else check distance too monasteries
+			float closestDist = float.MaxValue;
+			GameObject closestSafeMon = waypoints[0];
+			foreach(GameObject w in waypoints)
+			{
+				Vector3 diff = w.transform.position - this.transform.position;
+				if(diff.magnitude < closestDist)
+				{
+					closestDist = diff.magnitude;
+					target = w;
+					if(!(w.GetComponent<MonasteryScript>().underAttack))
+					{
+						closestSafeMon = w;
+					}
+				}
+			}
+
+			//If too far from closest one
+			if(closestDist > 40)
+			{
+				currentBehavior = behavior.Seek;
+				target = closestSafeMon;
+			}
+			//Else wander around your current monastery
+			else{
+				currentBehavior = behavior.Wander;
+			}
+
+		}
 	}
 }
