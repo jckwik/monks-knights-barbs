@@ -2,3 +2,10 @@ Library/metadata/
 Library/ScriptAssemblies/CompilationCompleted.txt
 [Ll]ibrary/
 [Tt]emp/
+
+*.pidb
+*.sln
+*.userprefs
+*.csprog
+ 
+*.orig
