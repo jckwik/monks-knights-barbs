@@ -7,5 +7,5 @@ Library/ScriptAssemblies/CompilationCompleted.txt
 *.sln
 *.userprefs
 *.csprog
- 
 *.orig
+*.orig.meta

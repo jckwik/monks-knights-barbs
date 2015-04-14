@@ -12,7 +12,6 @@ public class KnightScript : MonoBehaviour {
 	public GameController gameController;
 	public Vector3 direction;
 	public Vector3 velocity;
-	public DecisionTree decisionTree;
 
 	public enum behavior {AttackNearbyBarb, ArriveAtAttackedMonastery, ArriveAtARandomMonastery};
 	public behavior currentBehavior;
@@ -32,8 +31,6 @@ public class KnightScript : MonoBehaviour {
 	void Start () {
 		GameObject gC = GameObject.Find("Game Controller");
 		gameController = (GameController) gC.GetComponent(typeof(GameController));
-		GameObject dT = GameObject.Find("DecisionTree");
-		decisionTree = (DecisionTree) dT.GetComponent(typeof(DecisionTree));
 		moveSpeed = 5;
 		sightRange = 50;
 		direction = Vector3.zero;

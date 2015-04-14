@@ -34,14 +34,12 @@ public class MonkScript : MonoBehaviour {
 	public int numMInSight;
 
 	NavMeshAgent agent;
-	Rigidbody rb;
 
 	//Vector3 lastPos;
 
 	// Use this for initialization
 	void Start () {
 		agent = GetComponent<NavMeshAgent> ();
-		rb = GetComponent<Rigidbody> ();
 		GameObject gC = GameObject.Find("Game Controller");
 		gameController = (GameController) gC.GetComponent(typeof(GameController));
 		moveSpeed = 15;
