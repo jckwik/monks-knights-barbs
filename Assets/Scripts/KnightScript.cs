@@ -26,6 +26,7 @@ public class KnightScript : MonoBehaviour {
 	
 	public bool alive;
 	public float hitChance;
+	public float attackDelay;
 
 	// Use this for initialization
 	void Start () {
@@ -39,11 +40,35 @@ public class KnightScript : MonoBehaviour {
 		target = gameController.monasteryArray[Random.Range(0, gameController.monasteryArray.Length - 1)];
 		alive = true;
 		hitChance = 25;
+		attackDelay = 2;
 	}
 
 	// Update is called once per frame
 	void Update () {
+		if(target == null)
+		{
+			findTarget();
+		}
+		attackDelay -= Time.deltaTime;
+		if(attackDelay < 0)
+		{
+			attackDelay = 0;
+		}
 		hitChance = 25 + 25 * Mathf.Log(numKInSight);
+		Vector3 targetDist = target.transform.position - this.transform.position;
+		if(targetDist.magnitude <= 5)
+		{
+			Debug.Log("In Attack Range");
+			if(attackDelay <= 0)
+			{
+				Debug.Log("Attacking");
+				attackDelay = 2;
+				if(Random.Range(1,100) <= hitChance)
+				{
+					Destroy(target);
+				}
+			}
+		}
 		findUnitsInSight();
 		//findTarget ();
 		currentBehavior = makeDec();

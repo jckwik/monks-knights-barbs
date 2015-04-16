@@ -17,6 +17,7 @@ public class MonasteryScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		barray = gameController.barray;
 		underAttack = false;
 		foreach(GameObject b in barray)
 		{

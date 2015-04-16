@@ -27,6 +27,39 @@ public class GameController : MonoBehaviour {
 		Initialize ();
 	}
 
+	void Update()
+	{
+		List<GameObject> barrayNew = new List<GameObject> ();
+		foreach(GameObject b in barray)
+		{
+			if(b != null)
+			{
+				barrayNew.Add(b);
+			}
+		}
+		barray = barrayNew;
+
+		List<GameObject> karrayNew = new List<GameObject> ();
+		foreach(GameObject k in karray)
+		{
+			if(k != null)
+			{
+				karrayNew.Add(k);
+			}
+		}
+		karray = karrayNew;
+
+		List<GameObject> marrayNew = new List<GameObject> ();
+		foreach(GameObject m in marray)
+		{
+			if(m != null)
+			{
+				marrayNew.Add(m);
+			}
+		}
+		marray = marrayNew;
+	}
+
 	void Initialize() {
 		Debug.Log ("Running Initialize");
 
@@ -40,18 +73,18 @@ public class GameController : MonoBehaviour {
 
 		for (int i = 0; i < barbarians; i++) {
 			//Create barbarians at random locations
-			Vector3 pos = new Vector3(Random.Range(-100.0f, 100.0f), 1, Random.Range(-100.0f, 100.0f));
+			Vector3 pos = new Vector3(Random.Range(-225.0f, 225.0f), 1, Random.Range(-225.0f, 225.0f));
 			GameObject barb = (GameObject)Instantiate(barbarianFab, pos, Quaternion.identity);
 			barray.Add(barb);
 		}
 		for (int i = 0; i < knights; i++) {
 			//Create knights at random locations
-			Vector3 pos = new Vector3(Random.Range(-100.0f, 100.0f), 1, Random.Range(-100.0f, 100.0f));
+			Vector3 pos = new Vector3(Random.Range(-225.0f, 225.0f), 1, Random.Range(-225.0f, 225.0f));
 			GameObject knight = (GameObject)Instantiate(knightFab, pos, Quaternion.identity);
 			karray.Add(knight);
 		}
 		for (int i = 0; i < monks; i++) {
-			Vector3 pos = new Vector3(Random.Range(-100.0f, 100.0f), 1, Random.Range(-100.0f, 100.0f));
+			Vector3 pos = new Vector3(Random.Range(-225.0f, 225.0f), 1, Random.Range(-225.0f, 225.0f));
 			GameObject monk = (GameObject)Instantiate(monkFab, pos, Quaternion.identity);
 			marray.Add(monk);
 			//Create monks at random locations
