@@ -65,6 +65,7 @@ public class KnightScript : MonoBehaviour {
 				attackDelay = 2;
 				if(Random.Range(1,100) <= hitChance)
 				{
+					gameController.barray.Remove (target);
 					Destroy(target);
 				}
 			}
