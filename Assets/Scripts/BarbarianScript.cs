@@ -207,7 +207,7 @@ public class BarbarianScript : MonoBehaviour {
 
 	void s0Act ()
 	{
-		velocity += gameController.Wander (this.transform.position, moveSpeed, 40, 10);
+		velocity += gameController.Wander (this.transform.position, this.transform.forward, moveSpeed, 40, 10);
 		//Debug.Log ("State0: I'm just wandering.");
 	}
 	void s1Act ()

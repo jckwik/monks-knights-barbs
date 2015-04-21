@@ -76,9 +76,9 @@ public class MonkScript : MonoBehaviour {
 				break;
 				
 			case behavior.Wander:
-				velocity += gameController.Wander (this.transform.position, moveSpeed, 40, 10);
+				velocity += gameController.Wander (this.transform.position, this.transform.forward, moveSpeed, 20, 10);
 				velocity *= Time.deltaTime;
-				this.transform.position += velocity;
+				agent.SetDestination (this.transform.position + velocity);
 				break;
 				
 			case behavior.Follow:

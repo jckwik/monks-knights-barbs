@@ -123,16 +123,18 @@ public class GameController : MonoBehaviour {
 		return dv;		
 	}
 	
-	public Vector3 Wander (Vector3 pos, float speed, float wanderD, float wanderR) {
+	public Vector3 Wander (Vector3 pos, Vector3 forward, float speed, float wanderD, float wanderR) {
 		float randomAngle = Random.Range (0, Mathf.PI*2);
 		
-		Vector3 circleLoc = transform.forward;
+		Vector3 circleLoc = forward;
 		circleLoc *= wanderD;
-		circleLoc += transform.position;
+		circleLoc += pos;
 		
 		
 		Vector3 circleOffSet = new Vector3(Mathf.Cos (randomAngle)*wanderR, 0, Mathf.Sin (randomAngle)*wanderR);
 		Vector3 target = circleLoc + circleOffSet;
+		
+		Debug.DrawLine (pos, target, Color.green);
 
 		return Seek( pos, target, speed);	
 	}
