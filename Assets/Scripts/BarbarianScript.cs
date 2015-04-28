@@ -28,6 +28,8 @@ public class BarbarianScript : MonoBehaviour {
 
 	public bool alive;
 	public float hitChance;
+	
+	NavMeshAgent agent;
 
 	/* State Machine: 
 	 *  -> States:
@@ -47,10 +49,12 @@ public class BarbarianScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		agent = GetComponent<NavMeshAgent> ();
+		agent.speed = 10;
 		GameObject gC = GameObject.Find("Game Controller");
 		gameController = (GameController) gC.GetComponent(typeof(GameController));
 		stM = gameController.bStateM;
-		moveSpeed = 5;
+		moveSpeed = 15;
 		sightRange = 50;
 		direction = Vector3.zero;
 		velocity = Vector3.zero;
@@ -97,18 +101,19 @@ public class BarbarianScript : MonoBehaviour {
 
 		CallAction ();
 		
-		velocity *= Time.deltaTime;
-		this.transform.position += velocity;
+		Debug.DrawLine (this.transform.position, this.transform.position+velocity, Color.red);
+		//velocity *= Time.deltaTime;
+		//this.transform.position += velocity;
+		agent.SetDestination (this.transform.position + velocity);
 		lookAt ();
 		velocity = Vector3.zero;
-		Debug.DrawLine (this.transform.position, target.transform.position, Color.red);
 		this.transform.position = new Vector3(this.transform.position.x, 1, this.transform.position.z);
 		this.transform.rotation = new Quaternion(0, this.transform.rotation.y, 0, this.transform.rotation.w);
 	}
 	
 	void findTarget() {
 		if (target == null) {
-			target = gameController.player;
+			//target = gameController.player;
 		}
 	}
 	void findUnitsInSight() {
@@ -173,7 +178,7 @@ public class BarbarianScript : MonoBehaviour {
 	}
 	void lookAt() {
 		//direction = target.transform.position - this.transform.position;
-		this.transform.LookAt(velocity, Vector3.up);
+		//this.transform.LookAt(velocity, Vector3.up);
 	}
 	// Use state machine to make a transition and display the input
 	public void MakeTrans(int input)
@@ -199,7 +204,7 @@ public class BarbarianScript : MonoBehaviour {
 			s3Act ();
 			break;
 		default:
-			Debug.Log ("Oops!  Bad state!");
+			Debug.Log ("BARB: Oops!  Bad state!");
 			break;
 		}
 		return;
@@ -207,7 +212,7 @@ public class BarbarianScript : MonoBehaviour {
 
 	void s0Act ()
 	{
-		velocity += gameController.Wander (this.transform.position, this.transform.forward, moveSpeed, 40, 10);
+		velocity += gameController.Wander (this.transform.position, this.transform.forward, moveSpeed, 40, 20);
 		//Debug.Log ("State0: I'm just wandering.");
 	}
 	void s1Act ()

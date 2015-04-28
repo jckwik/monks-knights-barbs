@@ -134,7 +134,7 @@ public class GameController : MonoBehaviour {
 		Vector3 circleOffSet = new Vector3(Mathf.Cos (randomAngle)*wanderR, 0, Mathf.Sin (randomAngle)*wanderR);
 		Vector3 target = circleLoc + circleOffSet;
 		
-		Debug.DrawLine (pos, target, Color.green);
+		//Debug.DrawLine (pos, target, Color.green);
 
 		return Seek( pos, target, speed);	
 	}
