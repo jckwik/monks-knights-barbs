@@ -23,6 +23,7 @@ public class KnightScript : MonoBehaviour {
 	public int numBInSight;
 	public int numKInSight;
 	public int numMInSight;
+	public bool playerInSight;
 	
 	public bool alive;
 	public float hitChance;
@@ -67,6 +68,7 @@ public class KnightScript : MonoBehaviour {
 				{
 					gameController.barray.Remove (target);
 					Destroy(target);
+					target = null;
 				}
 			}
 		}
@@ -109,6 +111,7 @@ public class KnightScript : MonoBehaviour {
 		bInSight.Clear();
 		kInSight.Clear();
 		mInSight.Clear();
+		playerInSight = false;
 		
 		// barbarians in sight
 		List<GameObject> barbs = gameController.barray;
@@ -146,7 +149,12 @@ public class KnightScript : MonoBehaviour {
 				mInSight.Add(m);
 			}
 		}
-		
+
+		Vector3 diffp = gameController.player.transform.position - this.transform.position;
+		if (diffp.magnitude <= sightRange) {
+			playerInSight = true;
+		}
+
 		numBInSight = bInSight.Count;
 		numKInSight = kInSight.Count;
 		numMInSight = mInSight.Count;

@@ -16,7 +16,7 @@ public class BarbarianScript : MonoBehaviour {
 	public int currentState;
 	
 	public enum behavior {Seek, Flee, Arrive, Wander, Avoid, Follow};
-	public behavior currentBehavior;
+//	public behavior currentBehavior;
 	
 	List<GameObject> bInSight = new List<GameObject> ();
 	List<GameObject> kInSight = new List<GameObject> ();
@@ -25,6 +25,7 @@ public class BarbarianScript : MonoBehaviour {
 	public int numBInSight;
 	public int numKInSight;
 	public int numMInSight;
+	public bool playerInSight;
 
 	public bool alive;
 	public float hitChance;
@@ -58,7 +59,6 @@ public class BarbarianScript : MonoBehaviour {
 		sightRange = 50;
 		direction = Vector3.zero;
 		velocity = Vector3.zero;
-		currentBehavior = behavior.Wander;
 		currentState = 0;
 		alive = true;
 		hitChance = 40;
@@ -112,7 +112,7 @@ public class BarbarianScript : MonoBehaviour {
 	}
 	
 	void findTarget() {
-		if (target == null) {
+		if (target == ) {
 			//target = gameController.player;
 		}
 	}
@@ -157,6 +157,11 @@ public class BarbarianScript : MonoBehaviour {
 			if (diff.magnitude <= sightRange) {
 				mInSight.Add(m);
 			}
+		}
+
+		Vector3 diffp = gameController.player.transform.position - this.transform.position;
+		if (diffp.magnitude <= sightRange) {
+			playerInSight = true;
 		}
 		
 		numBInSight = bInSight.Count;

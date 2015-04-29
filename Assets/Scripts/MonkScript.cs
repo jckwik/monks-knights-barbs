@@ -32,6 +32,7 @@ public class MonkScript : MonoBehaviour {
 	public int numBInSight;
 	public int numKInSight;
 	public int numMInSight;
+	public bool playerInSight;
 
 	public bool alive;
 
@@ -167,7 +168,12 @@ public class MonkScript : MonoBehaviour {
 				mInSight.Add(m);
 			}
 		}
-		
+
+		Vector3 diffp = gameController.player.transform.position - this.transform.position;
+		if (diffp.magnitude <= sightRange) {
+			playerInSight = true;
+		}
+
 		numBInSight = bInSight.Count;
 		numKInSight = kInSight.Count;
 		numMInSight = mInSight.Count;
@@ -196,6 +202,7 @@ public class MonkScript : MonoBehaviour {
 
 	void Avoid()
 	{
+		Debug.Log ("Avoid being run");
 		RaycastHit hit = new RaycastHit();
 		if (Physics.Raycast (this.transform.position, this.transform.forward, out hit, 20)) {
 			if(hit.transform != this.transform)
