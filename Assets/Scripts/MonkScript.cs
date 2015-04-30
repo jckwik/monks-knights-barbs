@@ -35,6 +35,7 @@ public class MonkScript : MonoBehaviour {
 	public bool playerInSight;
 
 	public bool alive;
+	public int fitnessValue;
 
 	NavMeshAgent agent;
 

@@ -29,7 +29,10 @@ public class BarbarianScript : MonoBehaviour {
 
 	public bool alive;
 	public float hitChance;
-	
+	public float attackDelay;
+	public int fitnessValue;
+	public float timeSurvived;
+
 	NavMeshAgent agent;
 
 	/* State Machine: 
@@ -62,12 +65,36 @@ public class BarbarianScript : MonoBehaviour {
 		currentState = 0;
 		alive = true;
 		hitChance = 40;
+		attackDelay = 2;
+		timeSurvived = 0;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		timeSurvived += Time.deltaTime;
+		attackDelay -= Time.deltaTime;
+		if(attackDelay < 0)
+		{
+			attackDelay = 0;
+		}
 		findUnitsInSight();
 		findTarget ();
+		if (target != null) {
+			Vector3 targetDist = target.transform.position - this.transform.position;
+			if (targetDist.magnitude <= 5) {
+				Debug.Log ("Barbarian: In Attack Range");
+				if (attackDelay <= 0) {
+					Debug.Log ("Barbarian: Attacking");
+					attackDelay = 2;
+					if (Random.Range (1, 100) <= hitChance) {
+						gameController.barray.Remove (target);
+						gameController.roundSurvivalTimes.Add ((int)timeSurvived);
+						Destroy (target);
+						target = null;
+					}
+				}
+			}
+		}
 //		switch(currentBehavior)
 //		{
 //			case behavior.Seek:

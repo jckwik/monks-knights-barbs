@@ -28,6 +28,8 @@ public class KnightScript : MonoBehaviour {
 	public bool alive;
 	public float hitChance;
 	public float attackDelay;
+	public int fitnessValue;
+	public float timeSurvived;
 
 	// Use this for initialization
 	void Start () {
@@ -42,10 +44,12 @@ public class KnightScript : MonoBehaviour {
 		alive = true;
 		hitChance = 25;
 		attackDelay = 2;
+		timeSurvived = 0;
 	}
 
 	// Update is called once per frame
 	void Update () {
+		timeSurvived += Time.deltaTime;
 		if(target == null)
 		{
 			findTarget();
@@ -67,6 +71,7 @@ public class KnightScript : MonoBehaviour {
 				if(Random.Range(1,100) <= hitChance)
 				{
 					gameController.barray.Remove (target);
+					gameController.roundSurvivalTimes.Add((int)timeSurvived);
 					Destroy(target);
 					target = null;
 				}
