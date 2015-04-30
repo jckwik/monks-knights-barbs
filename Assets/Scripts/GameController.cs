@@ -23,6 +23,7 @@ public class GameController : MonoBehaviour {
 	public List<GameObject> marray = new List<GameObject> ();
 	public GameObject[] monasteryArray;
 	public List<int> roundSurvivalTimes = new List<int>();
+	public List<int> previousRoundInfo = new List<int> ();
 
 	public int roundNumber;
 
@@ -77,6 +78,21 @@ public class GameController : MonoBehaviour {
 			EmptyArrays();
 			StoreData();
 			Initialize();
+		}
+	}
+
+	void LoadData()
+	{
+		StreamReader instream = null;
+		try{
+			instream = new StreamReader("fitnessValues.txt");
+			string line = instream.ReadLine();
+
+
+			instream.Close();
+		}
+		catch{
+
 		}
 	}
 
