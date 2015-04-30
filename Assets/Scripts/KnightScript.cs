@@ -35,7 +35,7 @@ public class KnightScript : MonoBehaviour {
 	void Start () {
 		GameObject gC = GameObject.Find("Game Controller");
 		gameController = (GameController) gC.GetComponent(typeof(GameController));
-		moveSpeed = 5;
+		moveSpeed = 15;
 		sightRange = 50;
 		direction = Vector3.zero;
 		velocity = Vector3.zero;
@@ -155,9 +155,11 @@ public class KnightScript : MonoBehaviour {
 			}
 		}
 
-		Vector3 diffp = gameController.player.transform.position - this.transform.position;
-		if (diffp.magnitude <= sightRange) {
-			playerInSight = true;
+		if (gameController.player != null) {
+			Vector3 diffp = gameController.player.transform.position - this.transform.position;
+			if (diffp.magnitude <= sightRange) {
+				playerInSight = true;
+			}
 		}
 
 		numBInSight = bInSight.Count;

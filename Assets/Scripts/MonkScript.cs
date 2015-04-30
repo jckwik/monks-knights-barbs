@@ -36,6 +36,7 @@ public class MonkScript : MonoBehaviour {
 
 	public bool alive;
 	public int fitnessValue;
+	public float timeSurvived;
 
 	NavMeshAgent agent;
 
@@ -58,10 +59,12 @@ public class MonkScript : MonoBehaviour {
    		rightHit = false;
    		centerHit = false;
 		alive = true;
+		timeSurvived = 0;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		timeSurvived += Time.deltaTime;
 		FindUnitsInSight();
 		//agent.SetDestination (target.transform.position);
 		DetermineBehavior ();
@@ -171,9 +174,11 @@ public class MonkScript : MonoBehaviour {
 			}
 		}
 
-		Vector3 diffp = gameController.player.transform.position - this.transform.position;
-		if (diffp.magnitude <= sightRange) {
-			playerInSight = true;
+		if (gameController.player != null) {
+			Vector3 diffp = gameController.player.transform.position - this.transform.position;
+			if (diffp.magnitude <= sightRange) {
+				playerInSight = true;
+			}
 		}
 
 		numBInSight = bInSight.Count;

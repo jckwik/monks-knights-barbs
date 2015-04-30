@@ -63,15 +63,18 @@ public class GameController : MonoBehaviour {
 			}
 		}
 		marray = marrayNew;
-		if (barray.Count < 2) {
+		if (barray.Count <= 3) {
+			EmptyArrays();
 			StoreData();
 			Initialize();
 		}
-		else if (karray.Count < 2) {
+		else if (karray.Count <= 3) {
+			EmptyArrays();
 			StoreData();
 			Initialize();
 		}
-		else if (marray.Count < 2) {
+		else if (marray.Count <= 3) {
+			EmptyArrays();
 			StoreData();
 			Initialize();
 		}
@@ -80,7 +83,43 @@ public class GameController : MonoBehaviour {
 	void StoreData()
 	{
 		StreamWriter outStream = new StreamWriter ("fitnessValues.txt",false);
-		//foreach(
+		foreach (int i in roundSurvivalTimes) {
+			outStream.WriteLine(i);
+		}
+		outStream.Close ();
+		roundSurvivalTimes.Clear ();
+	}
+
+	void EmptyArrays()
+	{
+		Destroy (player);
+		foreach(GameObject b in barray)
+		{
+			if(b != null)
+			{
+				roundSurvivalTimes.Add((int)b.GetComponent<BarbarianScript>().timeSurvived);
+				Destroy (b);
+			}
+		}
+		foreach(GameObject k in karray)
+		{
+			if(k != null)
+			{
+				roundSurvivalTimes.Add((int)k.GetComponent<KnightScript>().timeSurvived);
+				Destroy (k);
+			}
+		}
+		foreach(GameObject m in marray)
+		{
+			if(m != null)
+			{
+				roundSurvivalTimes.Add((int)m.GetComponent<MonkScript>().timeSurvived);
+				Destroy (m);
+			}
+		}
+		barray.Clear ();
+		marray.Clear ();
+		karray.Clear ();
 	}
 
 	void Initialize() {
