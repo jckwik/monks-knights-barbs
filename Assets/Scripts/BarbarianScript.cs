@@ -112,7 +112,7 @@ public class BarbarianScript : MonoBehaviour {
 	}
 	
 	void findTarget() {
-		if (target == ) {
+		if (target == null) {
 			//target = gameController.player;
 		}
 	}
