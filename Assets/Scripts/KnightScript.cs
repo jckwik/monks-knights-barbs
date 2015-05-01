@@ -28,12 +28,14 @@ public class KnightScript : MonoBehaviour {
 	public bool alive;
 	public float hitChance;
 	public float attackDelay;
+	public int fitnessValue;
+	public float timeSurvived;
 
 	// Use this for initialization
 	void Start () {
 		GameObject gC = GameObject.Find("Game Controller");
 		gameController = (GameController) gC.GetComponent(typeof(GameController));
-		moveSpeed = 5;
+		moveSpeed = 15;
 		sightRange = 50;
 		direction = Vector3.zero;
 		velocity = Vector3.zero;
@@ -42,10 +44,12 @@ public class KnightScript : MonoBehaviour {
 		alive = true;
 		hitChance = 25;
 		attackDelay = 2;
+		timeSurvived = 0;
 	}
 
 	// Update is called once per frame
 	void Update () {
+		timeSurvived += Time.deltaTime;
 		if(target == null)
 		{
 			findTarget();
@@ -67,6 +71,7 @@ public class KnightScript : MonoBehaviour {
 				if(Random.Range(1,100) <= hitChance)
 				{
 					gameController.barray.Remove (target);
+					gameController.roundSurvivalTimes.Add((int)timeSurvived);
 					Destroy(target);
 					target = null;
 				}
@@ -150,9 +155,11 @@ public class KnightScript : MonoBehaviour {
 			}
 		}
 
-		Vector3 diffp = gameController.player.transform.position - this.transform.position;
-		if (diffp.magnitude <= sightRange) {
-			playerInSight = true;
+		if (gameController.player != null) {
+			Vector3 diffp = gameController.player.transform.position - this.transform.position;
+			if (diffp.magnitude <= sightRange) {
+				playerInSight = true;
+			}
 		}
 
 		numBInSight = bInSight.Count;

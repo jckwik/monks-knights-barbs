@@ -11,6 +11,7 @@ public class BarbarianScript : MonoBehaviour {
 	public GameController gameController;
 	public Vector3 direction;
 	public Vector3 velocity;
+	public float groupingStrength;
 
 	public StateMachine stM;
 	public int currentState;
@@ -29,7 +30,10 @@ public class BarbarianScript : MonoBehaviour {
 
 	public bool alive;
 	public float hitChance;
-	
+	public float attackDelay;
+	public int fitnessValue;
+	public float timeSurvived;
+
 	NavMeshAgent agent;
 
 	/* State Machine: 
@@ -59,15 +63,45 @@ public class BarbarianScript : MonoBehaviour {
 		sightRange = 50;
 		direction = Vector3.zero;
 		velocity = Vector3.zero;
+		groupingStrength = 0.1f;
 		currentState = 0;
 		alive = true;
 		hitChance = 40;
+		attackDelay = 2;
+		timeSurvived = 0;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		timeSurvived += Time.deltaTime;
+		attackDelay -= Time.deltaTime;
+		if(attackDelay < 0)
+		{
+			attackDelay = 0;
+		}
 		findUnitsInSight();
 		findTarget ();
+		if (target != null) {
+			// Check target type
+			MonkScript mScript = target.GetComponent<MonkScript>();
+			KnightScript kScript = target.GetComponent<KnightScript>();
+			if (mScript != null || kScript != null) {// if a monk and not a knight
+				Vector3 targetDist = target.transform.position - this.transform.position;
+				if (targetDist.magnitude <= 5) {
+					Debug.Log ("Barbarian: In Attack Range");
+					if (attackDelay <= 0) {
+						Debug.Log ("Barbarian: Attacking");
+						attackDelay = 2;
+						if (Random.Range (1, 100) <= hitChance) {
+							gameController.barray.Remove (target);
+							gameController.roundSurvivalTimes.Add ((int)timeSurvived);
+							Destroy (target);
+							target = null;
+						}
+					}
+				}
+			}			
+		}
 //		switch(currentBehavior)
 //		{
 //			case behavior.Seek:
@@ -112,7 +146,7 @@ public class BarbarianScript : MonoBehaviour {
 	}
 	
 	void findTarget() {
-		if (target == ) {
+		if (target == null) {
 			//target = gameController.player;
 		}
 	}
@@ -159,9 +193,11 @@ public class BarbarianScript : MonoBehaviour {
 			}
 		}
 
-		Vector3 diffp = gameController.player.transform.position - this.transform.position;
-		if (diffp.magnitude <= sightRange) {
-			playerInSight = true;
+		if (gameController.player != null) {
+			Vector3 diffp = gameController.player.transform.position - this.transform.position;
+			if (diffp.magnitude <= sightRange) {
+				playerInSight = true;
+			}
 		}
 		
 		numBInSight = bInSight.Count;
@@ -181,6 +217,44 @@ public class BarbarianScript : MonoBehaviour {
 			MakeTrans (1);
 		}
 	}
+	public GameObject getClosestMonk() {
+		if (numMInSight <= 0) return null;
+		
+		GameObject closest = mInSight[0];
+		Vector3 dist = this.transform.position - closest.transform.position;
+		float record = dist.magnitude;
+		
+		for (int i=1; i<mInSight.Count; i++) {
+			GameObject obj = mInSight[i];
+			
+			dist = this.transform.position - obj.transform.position;
+			float magn = dist.magnitude;
+			if (magn > record) {
+				closest = obj;
+				record = magn;
+			}
+		}
+		return closest;
+	}
+	public GameObject getClosestKnight() {
+		if (numKInSight <= 0) return null;
+		
+		GameObject closest = kInSight[0];
+		Vector3 dist = this.transform.position - closest.transform.position;
+		float record = dist.magnitude;
+		
+		for (int i=1; i<kInSight.Count; i++) {
+			GameObject obj = kInSight[i];
+			
+			dist = this.transform.position - obj.transform.position;
+			float magn = dist.magnitude;
+			if (magn > record) {
+				closest = obj;
+				record = magn;
+			}
+		}
+		return closest;
+	}
 	void lookAt() {
 		//direction = target.transform.position - this.transform.position;
 		//this.transform.LookAt(velocity, Vector3.up);
@@ -194,6 +268,13 @@ public class BarbarianScript : MonoBehaviour {
 
 	public void CallAction ()
 	{
+		// Always group with other barbs
+		if (numBInSight > 0) {
+			target = bInSight [0];
+			velocity += gameController.Arrive (this.transform.position, target.transform.position, moveSpeed, 20, 5);
+			velocity *= groupingStrength;
+		}
+		
 		switch (currentState)
 		{
 		case 0:
@@ -224,7 +305,7 @@ public class BarbarianScript : MonoBehaviour {
 	{
 		//Find a target
 		if (numMInSight > 0) {
-			target = mInSight [0];
+			target = getClosestMonk();
 			velocity += gameController.Seek (this.transform.position, target.transform.position, moveSpeed);
 		} else 
 			MakeTrans (4);
@@ -234,7 +315,7 @@ public class BarbarianScript : MonoBehaviour {
 	{
 		//Find a target
 		if (numKInSight > 0) {
-			target = kInSight [0];
+			target = getClosestKnight ();
 			velocity += gameController.Flee (this.transform.position, target.transform.position, moveSpeed);
 		} else
 			MakeTrans (4);
@@ -242,6 +323,7 @@ public class BarbarianScript : MonoBehaviour {
 	}
 	void s3Act ()
 	{
+		/*
 		//Follow?
 		if (numBInSight > 0) {
 			target = bInSight [0];
@@ -249,5 +331,7 @@ public class BarbarianScript : MonoBehaviour {
 		} else
 			MakeTrans (4);
 		//Debug.Log ("State3: I'm following others.");
+		*/
+		MakeTrans (4);
 	}
 }

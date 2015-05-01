@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 
 public class GameController : MonoBehaviour {
 
@@ -21,9 +22,14 @@ public class GameController : MonoBehaviour {
 	public List<GameObject> karray = new List<GameObject> ();
 	public List<GameObject> marray = new List<GameObject> ();
 	public GameObject[] monasteryArray;
-	
+	public List<int> roundSurvivalTimes = new List<int>();
+	public List<int> previousRoundInfo = new List<int> ();
+
+	public int roundNumber;
+
 	// Use this for initialization
 	void Start () {
+		roundNumber = 0;
 		Initialize ();
 	}
 
@@ -58,6 +64,78 @@ public class GameController : MonoBehaviour {
 			}
 		}
 		marray = marrayNew;
+		if (barray.Count <= 3) {
+			EmptyArrays();
+			StoreData();
+			Initialize();
+		}
+		else if (karray.Count <= 3) {
+			EmptyArrays();
+			StoreData();
+			Initialize();
+		}
+		else if (marray.Count <= 3) {
+			EmptyArrays();
+			StoreData();
+			Initialize();
+		}
+	}
+
+	void LoadData()
+	{
+		StreamReader instream = null;
+		try{
+			instream = new StreamReader("fitnessValues.txt");
+			string line = instream.ReadLine();
+
+
+			instream.Close();
+		}
+		catch{
+
+		}
+	}
+
+	void StoreData()
+	{
+		StreamWriter outStream = new StreamWriter ("fitnessValues.txt",false);
+		foreach (int i in roundSurvivalTimes) {
+			outStream.WriteLine(i);
+		}
+		outStream.Close ();
+		roundSurvivalTimes.Clear ();
+	}
+
+	void EmptyArrays()
+	{
+		Destroy (player);
+		foreach(GameObject b in barray)
+		{
+			if(b != null)
+			{
+				roundSurvivalTimes.Add((int)b.GetComponent<BarbarianScript>().timeSurvived);
+				Destroy (b);
+			}
+		}
+		foreach(GameObject k in karray)
+		{
+			if(k != null)
+			{
+				roundSurvivalTimes.Add((int)k.GetComponent<KnightScript>().timeSurvived);
+				Destroy (k);
+			}
+		}
+		foreach(GameObject m in marray)
+		{
+			if(m != null)
+			{
+				roundSurvivalTimes.Add((int)m.GetComponent<MonkScript>().timeSurvived);
+				Destroy (m);
+			}
+		}
+		barray.Clear ();
+		marray.Clear ();
+		karray.Clear ();
 	}
 
 	void Initialize() {
@@ -75,21 +153,25 @@ public class GameController : MonoBehaviour {
 			//Create barbarians at random locations
 			Vector3 pos = new Vector3(Random.Range(-225.0f, 225.0f), 1, Random.Range(-225.0f, 225.0f));
 			GameObject barb = (GameObject)Instantiate(barbarianFab, pos, Quaternion.identity);
+			barb.GetComponent<BarbarianScript>().fitnessValue = 10;
 			barray.Add(barb);
 		}
 		for (int i = 0; i < knights; i++) {
 			//Create knights at random locations
 			Vector3 pos = new Vector3(Random.Range(-225.0f, 225.0f), 1, Random.Range(-225.0f, 225.0f));
 			GameObject knight = (GameObject)Instantiate(knightFab, pos, Quaternion.identity);
+			knight.GetComponent<KnightScript>().fitnessValue = 10;
 			karray.Add(knight);
 		}
 		for (int i = 0; i < monks; i++) {
 			Vector3 pos = new Vector3(Random.Range(-225.0f, 225.0f), 1, Random.Range(-225.0f, 225.0f));
 			GameObject monk = (GameObject)Instantiate(monkFab, pos, Quaternion.identity);
+			monk.GetComponent<MonkScript>().fitnessValue = 10;
 			marray.Add(monk);
 			//Create monks at random locations
 		}
 		monasteryArray = GameObject.FindGameObjectsWithTag("Monastery");
+		roundNumber++;
 	}
 	
 	public Vector3 Seek (Vector3 pos, Vector3 targetPos, float speed)

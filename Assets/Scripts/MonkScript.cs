@@ -35,6 +35,8 @@ public class MonkScript : MonoBehaviour {
 	public bool playerInSight;
 
 	public bool alive;
+	public int fitnessValue;
+	public float timeSurvived;
 
 	NavMeshAgent agent;
 
@@ -57,10 +59,12 @@ public class MonkScript : MonoBehaviour {
    		rightHit = false;
    		centerHit = false;
 		alive = true;
+		timeSurvived = 0;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		timeSurvived += Time.deltaTime;
 		FindUnitsInSight();
 		//agent.SetDestination (target.transform.position);
 		DetermineBehavior ();
@@ -122,6 +126,7 @@ public class MonkScript : MonoBehaviour {
 		//this.transform.Translate(direction.normalized * moveSpeed * Time.deltaTime);
 		velocity = Vector3.zero;
 		//Lock y position and x and z rotation
+		Debug.DrawLine (this.transform.position, target.transform.position, Color.green);
 		this.transform.position = new Vector3(this.transform.position.x, 1, this.transform.position.z);
 		this.transform.rotation = new Quaternion(0, this.transform.rotation.y, 0, this.transform.rotation.w);
 	}	
@@ -169,9 +174,11 @@ public class MonkScript : MonoBehaviour {
 			}
 		}
 
-		Vector3 diffp = gameController.player.transform.position - this.transform.position;
-		if (diffp.magnitude <= sightRange) {
-			playerInSight = true;
+		if (gameController.player != null) {
+			Vector3 diffp = gameController.player.transform.position - this.transform.position;
+			if (diffp.magnitude <= sightRange) {
+				playerInSight = true;
+			}
 		}
 
 		numBInSight = bInSight.Count;
