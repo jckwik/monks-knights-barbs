@@ -92,7 +92,7 @@ public class GameController : MonoBehaviour {
 			for(int i = 0; i < (monks + knights + barbarians); i++)
 			{
 				string line = instream.ReadLine();
-				string[] tokens = (line.Split ((char)" ")).ToString();
+				string[] tokens = (string[])(line.Split (' '));
 				int chrom = int.Parse(tokens[0]);
 				int fitness = int.Parse(tokens[0]);
 				chroms.Add(chrom);
@@ -112,7 +112,7 @@ public class GameController : MonoBehaviour {
 			outStream.WriteLine(i);
 		}
 		outStream.Close ();
-		roundSurvivalTimes.Clear ();
+		roundInfo.Clear ();
 	}
 
 	void EmptyArrays()
