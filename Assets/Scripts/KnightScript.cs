@@ -26,6 +26,7 @@ public class KnightScript : MonoBehaviour {
 	public bool playerInSight;
 	
 	public bool alive;
+	public int health;
 	public float hitChance;
 	public float attackDelay;
 	public int fitnessValue;
@@ -46,10 +47,15 @@ public class KnightScript : MonoBehaviour {
 		hitChance = 25;
 		attackDelay = 2;
 		timeSurvived = 0;
+		health = 1;
 	}
 
 	// Update is called once per frame
 	void Update () {
+		if (!alive)
+			return;
+		if (health <= 0) 
+			alive = !alive;
 		timeSurvived += Time.deltaTime;
 		if(target == null)
 		{
@@ -108,7 +114,12 @@ public class KnightScript : MonoBehaviour {
 	}
 
 	void findTarget() {
-		if (target == null) {
+		try {
+			if (target == null) {
+				target = gameController.player;
+			}
+		}
+		catch {
 			target = gameController.player;
 		}
 	}

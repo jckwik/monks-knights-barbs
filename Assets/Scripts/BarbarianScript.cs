@@ -29,6 +29,7 @@ public class BarbarianScript : MonoBehaviour {
 	public bool playerInSight;
 
 	public bool alive;
+	public int health;
 	public float hitChance;
 	public float attackDelay;
 	public int fitnessValue;
@@ -70,10 +71,15 @@ public class BarbarianScript : MonoBehaviour {
 		hitChance = 40;
 		attackDelay = 2;
 		timeSurvived = 0;
+		health = 1;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		if (!alive)
+			return;
+		if (health <= 0) 
+			alive = !alive;
 		timeSurvived += Time.deltaTime;
 		attackDelay -= Time.deltaTime;
 		if(attackDelay < 0)
@@ -86,7 +92,7 @@ public class BarbarianScript : MonoBehaviour {
 			// Check target type
 			MonkScript mScript = target.GetComponent<MonkScript>();
 			KnightScript kScript = target.GetComponent<KnightScript>();
-			if (mScript != null || kScript != null) {// if a monk and not a knight
+			if (mScript != null || kScript != null) {// if a monk or a knight
 				Vector3 targetDist = target.transform.position - this.transform.position;
 				if (targetDist.magnitude <= 5) {
 					Debug.Log ("Barbarian: In Attack Range");
@@ -94,17 +100,9 @@ public class BarbarianScript : MonoBehaviour {
 						Debug.Log ("Barbarian: Attacking");
 						attackDelay = 2;
 						if (Random.Range (1, 100) <= hitChance) {
-							gameController.barray.Remove (target);
-							if(mScript != null)
-							{
-								gameController.roundInfo.Add((mScript.chrom).ToString() + " " + (mScript.timeSurvived).ToString());
-							}
-							else if(kScript != null)
-							{
-								gameController.roundInfo.Add((kScript.chrom).ToString() + " " + (kScript.timeSurvived).ToString());
-							}
-							Destroy (target);
-							target = null;
+							if (mScript == null) 
+								kScript.health-=1;
+							else mScript.health-=1;
 						}
 					}
 				}
@@ -154,8 +152,13 @@ public class BarbarianScript : MonoBehaviour {
 	}
 	
 	void findTarget() {
-		if (target == null) {
-			//target = gameController.player;
+		try {
+			if (target == null) {
+				//target = gameController.player;
+			}
+		}
+		catch {
+			target = null;
 		}
 	}
 	void findUnitsInSight() {

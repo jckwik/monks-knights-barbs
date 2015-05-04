@@ -39,9 +39,14 @@ public class GameController : MonoBehaviour {
 		List<GameObject> barrayNew = new List<GameObject> ();
 		foreach(GameObject b in barray)
 		{
-			if(b != null)
+			BarbarianScript bScript = b.GetComponent<BarbarianScript>();
+			if(bScript.alive)
 			{
 				barrayNew.Add(b);
+			}
+			else {
+				roundInfo.Add((bScript.chrom).ToString() + " " + (bScript.timeSurvived).ToString());
+				Destroy(b);
 			}
 		}
 		barray = barrayNew;
@@ -49,9 +54,14 @@ public class GameController : MonoBehaviour {
 		List<GameObject> karrayNew = new List<GameObject> ();
 		foreach(GameObject k in karray)
 		{
-			if(k != null)
+			KnightScript kScript = k.GetComponent<KnightScript>();
+			if(kScript.alive)
 			{
 				karrayNew.Add(k);
+			}
+			else {
+				roundInfo.Add((kScript.chrom).ToString() + " " + (kScript.timeSurvived).ToString());
+				Destroy(k);
 			}
 		}
 		karray = karrayNew;
@@ -59,9 +69,14 @@ public class GameController : MonoBehaviour {
 		List<GameObject> marrayNew = new List<GameObject> ();
 		foreach(GameObject m in marray)
 		{
-			if(m != null)
+			MonkScript mScript = m.GetComponent<MonkScript>();
+			if(mScript.alive)
 			{
 				marrayNew.Add(m);
+			}
+			else {
+				roundInfo.Add((mScript.chrom).ToString() + " " + (mScript.timeSurvived).ToString());
+				Destroy(m);
 			}
 		}
 		marray = marrayNew;

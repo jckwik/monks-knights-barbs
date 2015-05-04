@@ -35,6 +35,7 @@ public class MonkScript : MonoBehaviour {
 	public bool playerInSight;
 
 	public bool alive;
+	public int health;
 	public int fitnessValue;
 	public float timeSurvived;
 	public int chrom;
@@ -61,10 +62,15 @@ public class MonkScript : MonoBehaviour {
    		centerHit = false;
 		alive = true;
 		timeSurvived = 0;
+		health = 1;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		if (!alive)
+			return;
+		if (health <= 0) 
+			alive = !alive;
 		timeSurvived += Time.deltaTime;
 		FindUnitsInSight();
 		//agent.SetDestination (target.transform.position);
@@ -187,9 +193,14 @@ public class MonkScript : MonoBehaviour {
 		numMInSight = mInSight.Count;
 	}
 	void FindTarget() {
-		//if (target == null) {
-		//	target = gameController.player;
-		//}
+		try {
+			if (target == null) {
+				target = gameController.player;
+			}
+		}
+		catch {
+			target = gameController.player;
+		}
 		Vector3 pos = this.transform.position;
 		Vector3 targetPos = target.transform.position;
 		if (Mathf.Sqrt ((targetPos.x - pos.x) * (targetPos.x - pos.x) + (targetPos.z - pos.z) * (targetPos.z - pos.z)) < 25) {
