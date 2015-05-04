@@ -278,9 +278,12 @@ public class BarbarianScript : MonoBehaviour {
 	{
 		// Always group with other barbs
 		if (numBInSight > 0) {
-			target = bInSight [0];
-			velocity += gameController.Arrive (this.transform.position, target.transform.position, moveSpeed, 20, 5);
-			velocity *= groupingStrength;
+			BarbarianScript blah = (BarbarianScript)bInSight[0].GetComponent("BarbarianScript");
+			if (blah.target != this.gameObject) {
+				target = bInSight [0];
+				velocity += gameController.Arrive (this.transform.position, target.transform.position, moveSpeed, 20, 5);
+				velocity *= groupingStrength;
+			}
 		}
 		
 		switch (currentState)

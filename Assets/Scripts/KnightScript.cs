@@ -64,10 +64,10 @@ public class KnightScript : MonoBehaviour {
 		Vector3 targetDist = target.transform.position - this.transform.position;
 		if(targetDist.magnitude <= 5)
 		{
-			Debug.Log("KNIGHT: In Attack Range");
+			//Debug.Log("KNIGHT: In Attack Range");
 			if(attackDelay <= 0)
 			{
-				Debug.Log("KNIGHT: Attacking");
+				//Debug.Log("KNIGHT: Attacking");
 				attackDelay = 2;
 				if(Random.Range(1,100) <= hitChance)
 				{
