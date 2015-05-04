@@ -95,9 +95,9 @@ public class BarbarianScript : MonoBehaviour {
 			if (mScript != null || kScript != null) {// if a monk or a knight
 				Vector3 targetDist = target.transform.position - this.transform.position;
 				if (targetDist.magnitude <= 5) {
-					Debug.Log ("Barbarian: In Attack Range");
+					//Debug.Log ("Barbarian: In Attack Range");
 					if (attackDelay <= 0) {
-						Debug.Log ("Barbarian: Attacking");
+						//Debug.Log ("Barbarian: Attacking");
 						attackDelay = 2;
 						if (Random.Range (1, 100) <= hitChance) {
 							if (mScript == null) 
@@ -286,6 +286,9 @@ public class BarbarianScript : MonoBehaviour {
 				target = bInSight [0];
 				velocity += gameController.Arrive (this.transform.position, target.transform.position, moveSpeed, 20, 5);
 				velocity *= groupingStrength;
+			}
+			else {
+				s0Act();
 			}
 		}
 		
