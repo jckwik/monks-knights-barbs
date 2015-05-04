@@ -22,8 +22,9 @@ public class GameController : MonoBehaviour {
 	public List<GameObject> karray = new List<GameObject> ();
 	public List<GameObject> marray = new List<GameObject> ();
 	public GameObject[] monasteryArray;
-	public List<int> roundSurvivalTimes = new List<int>();
-	public List<int> previousRoundInfo = new List<int> ();
+	public List<string> roundInfo = new List<string>();
+	public List<int> chroms = new List<int> ();
+	public List<int> fitnessValues = new List<int> ();
 
 	public int roundNumber;
 
@@ -83,12 +84,20 @@ public class GameController : MonoBehaviour {
 
 	void LoadData()
 	{
+		chroms.Clear();
+		fitnessValues.Clear ();
 		StreamReader instream = null;
 		try{
 			instream = new StreamReader("fitnessValues.txt");
-			string line = instream.ReadLine();
-
-
+			for(int i = 0; i < (monks + knights + barbarians); i++)
+			{
+				string line = instream.ReadLine();
+				string[] tokens = (line.Split ((char)" ")).ToString();
+				int chrom = int.Parse(tokens[0]);
+				int fitness = int.Parse(tokens[0]);
+				chroms.Add(chrom);
+				fitnessValues.Add(fitness);
+			}
 			instream.Close();
 		}
 		catch{
@@ -99,7 +108,7 @@ public class GameController : MonoBehaviour {
 	void StoreData()
 	{
 		StreamWriter outStream = new StreamWriter ("fitnessValues.txt",false);
-		foreach (int i in roundSurvivalTimes) {
+		foreach (string i in roundInfo) {
 			outStream.WriteLine(i);
 		}
 		outStream.Close ();
@@ -113,7 +122,7 @@ public class GameController : MonoBehaviour {
 		{
 			if(b != null)
 			{
-				roundSurvivalTimes.Add((int)b.GetComponent<BarbarianScript>().timeSurvived);
+				roundInfo.Add((b.GetComponent<BarbarianScript>().chrom).ToString() + " " + (b.GetComponent<BarbarianScript>().timeSurvived * 1.5).ToString());
 				Destroy (b);
 			}
 		}
@@ -121,7 +130,7 @@ public class GameController : MonoBehaviour {
 		{
 			if(k != null)
 			{
-				roundSurvivalTimes.Add((int)k.GetComponent<KnightScript>().timeSurvived);
+				roundInfo.Add((k.GetComponent<KnightScript>().chrom).ToString() + " " + (k.GetComponent<KnightScript>().timeSurvived * 1.5).ToString());
 				Destroy (k);
 			}
 		}
@@ -129,7 +138,7 @@ public class GameController : MonoBehaviour {
 		{
 			if(m != null)
 			{
-				roundSurvivalTimes.Add((int)m.GetComponent<MonkScript>().timeSurvived);
+				roundInfo.Add((m.GetComponent<MonkScript>().chrom).ToString() + " " + (m.GetComponent<MonkScript>().timeSurvived * 1.5).ToString());
 				Destroy (m);
 			}
 		}
@@ -140,7 +149,7 @@ public class GameController : MonoBehaviour {
 
 	void Initialize() {
 		Debug.Log ("Running Initialize");
-
+		int creationCount = 0;
 		Vector3 playerPos = new Vector3 (0, 1, 0);
 		player = (GameObject)Instantiate (playerFab, playerPos, Quaternion.identity);
 		for (int i = 0; i < monastaries; i++) {
@@ -153,22 +162,28 @@ public class GameController : MonoBehaviour {
 			//Create barbarians at random locations
 			Vector3 pos = new Vector3(Random.Range(-225.0f, 225.0f), 1, Random.Range(-225.0f, 225.0f));
 			GameObject barb = (GameObject)Instantiate(barbarianFab, pos, Quaternion.identity);
-			barb.GetComponent<BarbarianScript>().fitnessValue = 10;
+			barb.GetComponent<BarbarianScript>().fitnessValue = fitnessValues[creationCount];
+			barb.GetComponent<BarbarianScript>().chrom = chroms[creationCount];
 			barray.Add(barb);
+			creationCount++;
 		}
 		for (int i = 0; i < knights; i++) {
 			//Create knights at random locations
 			Vector3 pos = new Vector3(Random.Range(-225.0f, 225.0f), 1, Random.Range(-225.0f, 225.0f));
 			GameObject knight = (GameObject)Instantiate(knightFab, pos, Quaternion.identity);
-			knight.GetComponent<KnightScript>().fitnessValue = 10;
+			knight.GetComponent<KnightScript>().fitnessValue = fitnessValues[creationCount];
+			knight.GetComponent<KnightScript>().chrom = chroms[creationCount];
 			karray.Add(knight);
+			creationCount++;
 		}
 		for (int i = 0; i < monks; i++) {
+			//Create monks at random locations
 			Vector3 pos = new Vector3(Random.Range(-225.0f, 225.0f), 1, Random.Range(-225.0f, 225.0f));
 			GameObject monk = (GameObject)Instantiate(monkFab, pos, Quaternion.identity);
-			monk.GetComponent<MonkScript>().fitnessValue = 10;
+			monk.GetComponent<MonkScript>().fitnessValue = fitnessValues[creationCount];
+			monk.GetComponent<MonkScript>().chrom = chroms[creationCount];
 			marray.Add(monk);
-			//Create monks at random locations
+			creationCount++;
 		}
 		monasteryArray = GameObject.FindGameObjectsWithTag("Monastery");
 		roundNumber++;

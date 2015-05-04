@@ -33,6 +33,7 @@ public class BarbarianScript : MonoBehaviour {
 	public float attackDelay;
 	public int fitnessValue;
 	public float timeSurvived;
+	public int chrom;
 
 	NavMeshAgent agent;
 
@@ -94,7 +95,14 @@ public class BarbarianScript : MonoBehaviour {
 						attackDelay = 2;
 						if (Random.Range (1, 100) <= hitChance) {
 							gameController.barray.Remove (target);
-							gameController.roundSurvivalTimes.Add ((int)timeSurvived);
+							if(mScript != null)
+							{
+								gameController.roundInfo.Add((mScript.chrom).ToString() + " " + (mScript.timeSurvived).ToString());
+							}
+							else if(kScript != null)
+							{
+								gameController.roundInfo.Add((kScript.chrom).ToString() + " " + (kScript.timeSurvived).ToString());
+							}
 							Destroy (target);
 							target = null;
 						}
