@@ -15,6 +15,7 @@ public class GameController : MonoBehaviour {
 	public GameObject monkFab;
 	public GameObject player;
 	public GameObject playerFab;
+	public GameObject monasteryFab;
 
 	public StateMachine bStateM;
 
