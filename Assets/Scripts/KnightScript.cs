@@ -19,6 +19,7 @@ public class KnightScript : MonoBehaviour {
 	List<GameObject> bInSight = new List<GameObject> ();
 	List<GameObject> kInSight = new List<GameObject> ();
 	List<GameObject> mInSight = new List<GameObject> ();
+	GameObject[] monArray;
 	
 	public int numBInSight;
 	public int numKInSight;
@@ -42,7 +43,8 @@ public class KnightScript : MonoBehaviour {
 		direction = Vector3.zero;
 		velocity = Vector3.zero;
 		currentBehavior = behavior.ArriveAtARandomMonastery;
-		target = gameController.monasteryArray[Random.Range(0, gameController.monasteryArray.Length - 1)];
+		monArray = gameController.monasteryArray.ToArray ();
+		target = monArray[Random.Range(0, monArray.Length - 1)];
 		alive = true;
 		hitChance = 25;
 		attackDelay = 2;
@@ -77,10 +79,8 @@ public class KnightScript : MonoBehaviour {
 				attackDelay = 2;
 				if(Random.Range(1,100) <= hitChance)
 				{
-					gameController.barray.Remove (target);
-					gameController.roundInfo.Add((target.GetComponent<BarbarianScript>().chrom).ToString() + " " + (target.GetComponent<BarbarianScript>().timeSurvived).ToString());
-					Destroy(target);
-					target = null;
+					BarbarianScript barb = target.GetComponent<BarbarianScript>();
+					if (barb != null) barb.health -= 1;
 				}
 			}
 		}
@@ -221,8 +221,13 @@ public class KnightScript : MonoBehaviour {
 				}
 				else
 				{
-					targetIndex = Random.Range(0, gameController.monasteryArray.Length - 1);
-					target = gameController.monasteryArray[targetIndex];
+					targetIndex = Random.Range(0, monArray.Length - 1);
+					if (monArray[targetIndex] == null) {
+						monArray = gameController.monasteryArray.ToArray();
+						targetIndex = Random.Range(0, monArray.Length - 1);
+					}
+					target = monArray[targetIndex];
+
 				}
 				return behavior.ArriveAtARandomMonastery;
 			}

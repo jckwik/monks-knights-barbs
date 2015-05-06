@@ -22,15 +22,17 @@ public class GameController : MonoBehaviour {
 	public List<GameObject> barray = new List<GameObject> ();
 	public List<GameObject> karray = new List<GameObject> ();
 	public List<GameObject> marray = new List<GameObject> ();
-	public GameObject[] monasteryArray;
+	public List<GameObject> monasteryArray = new List<GameObject> ();
 	public List<string> roundInfo = new List<string>();
 	public List<int> chroms = new List<int> ();
 	public List<int> fitnessValues = new List<int> ();
 
 	public int roundNumber;
+	public int[,] monPlace;
 
 	// Use this for initialization
 	void Start () {
+		monPlace =  new int[,]{{0, 0}, {100, 0}, {200, 0}, {-100, 0}, {-200, 0}, {-100, 100}, {100, -100} };
 		roundNumber = 0;
 		LoadData();
 		Initialize ();
@@ -222,6 +224,14 @@ public class GameController : MonoBehaviour {
 				Destroy (m);
 			}
 		}
+		foreach (GameObject mon in monasteryArray) 
+		{
+			if (mon != null) 
+			{
+				Destroy (mon);
+			}
+		}
+		monasteryArray.Clear ();
 		barray.Clear ();
 		marray.Clear ();
 		karray.Clear ();
@@ -285,7 +295,10 @@ public class GameController : MonoBehaviour {
 			marray.Add(monk);
 			creationCount++;
 		}
-		monasteryArray = GameObject.FindGameObjectsWithTag("Monastery");
+		for (int i = 0; i < monastaries; i++) {
+			GameObject newMon = (GameObject)Instantiate(monasteryFab, new Vector3(monPlace[i, 0], 1, monPlace[i, 1]), Quaternion.identity);
+			monasteryArray.Add (newMon);
+		}
 		roundNumber++;
 	}
 	

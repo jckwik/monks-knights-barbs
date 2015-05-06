@@ -90,6 +90,7 @@ public class BarbarianScript : MonoBehaviour {
 		findTarget ();
 		if (target != null) {
 			// Check target type
+			//Unit tarUnit = target.GetComponenet<Unit>();
 			MonkScript mScript = target.GetComponent<MonkScript>();
 			KnightScript kScript = target.GetComponent<KnightScript>();
 			if (mScript != null || kScript != null) {// if a monk or a knight
@@ -100,6 +101,7 @@ public class BarbarianScript : MonoBehaviour {
 						//Debug.Log ("Barbarian: Attacking");
 						attackDelay = 2;
 						if (Random.Range (1, 100) <= hitChance) {
+							//tarUnit.health-=1;
 							if (mScript == null) 
 								kScript.health-=1;
 							else mScript.health-=1;
