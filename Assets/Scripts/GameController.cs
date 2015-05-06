@@ -77,7 +77,7 @@ public class GameController : MonoBehaviour {
 				marrayNew.Add(m);
 			}
 			else {
-				roundInfo.Add((mScript.chrom).ToString() + " " + (mScript.timeSurvived).ToString());
+				roundInfo.Add((mScript.chrom).ToString() + " " + (mScript.timeSurvived * 1.5).ToString());
 				Destroy(m);
 			}
 		}
@@ -202,7 +202,7 @@ public class GameController : MonoBehaviour {
 		{
 			if(b != null)
 			{
-				roundInfo.Add((b.GetComponent<BarbarianScript>().chrom).ToString() + " " + (b.GetComponent<BarbarianScript>().timeSurvived * 1.5).ToString());
+				roundInfo.Add((b.GetComponent<BarbarianScript>().chrom).ToString() + " " + (b.GetComponent<BarbarianScript>().timeSurvived * 1.1).ToString());
 				Destroy (b);
 			}
 		}
@@ -210,7 +210,7 @@ public class GameController : MonoBehaviour {
 		{
 			if(k != null)
 			{
-				roundInfo.Add((k.GetComponent<KnightScript>().chrom).ToString() + " " + (k.GetComponent<KnightScript>().timeSurvived * 1.5).ToString());
+				roundInfo.Add((k.GetComponent<KnightScript>().chrom).ToString() + " " + (k.GetComponent<KnightScript>().timeSurvived * 1.1).ToString());
 				Destroy (k);
 			}
 		}

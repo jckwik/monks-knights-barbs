@@ -34,6 +34,7 @@ public class BarbarianScript : MonoBehaviour {
 	public float attackDelay;
 	public int fitnessValue;
 	public float timeSurvived;
+	public int roundKillCount;
 	public int chrom;
 
 	NavMeshAgent agent;
@@ -71,6 +72,7 @@ public class BarbarianScript : MonoBehaviour {
 		hitChance = 40;
 		attackDelay = 2;
 		timeSurvived = 0;
+		roundKillCount = 0;
 		health = 1;
 	}
 	
@@ -101,8 +103,21 @@ public class BarbarianScript : MonoBehaviour {
 						attackDelay = 2;
 						if (Random.Range (1, 100) <= hitChance) {
 							if (mScript == null) 
+							{
 								kScript.health-=1;
-							else mScript.health-=1;
+								if(kScript.health <= 0)
+								{
+									roundKillCount++;
+								}
+							}	
+							else
+							{
+								mScript.health-=1;
+								if(mScript.health <= 0)
+								{
+									roundKillCount++;
+								}
+							}
 						}
 					}
 				}
