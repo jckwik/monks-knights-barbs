@@ -32,6 +32,7 @@ public class KnightScript : MonoBehaviour {
 	public float attackDelay;
 	public int fitnessValue;
 	public float timeSurvived;
+	public int roundKillCount;
 	public int chrom;
 
 	// Use this for initialization
@@ -49,6 +50,7 @@ public class KnightScript : MonoBehaviour {
 		hitChance = 25;
 		attackDelay = 2;
 		timeSurvived = 0;
+		roundKillCount = 0;
 		health = 1;
 	}
 
@@ -80,7 +82,14 @@ public class KnightScript : MonoBehaviour {
 				if(Random.Range(1,100) <= hitChance)
 				{
 					BarbarianScript barb = target.GetComponent<BarbarianScript>();
-					if (barb != null) barb.health -= 1;
+					if (barb != null)
+					{
+						barb.health -= 1;
+						roundKillCount++;
+					}
+					//gameController.barray.Remove (target);
+					//gameController.roundInfo.Add((target.GetComponent<BarbarianScript>().chrom).ToString() + " " + (target.GetComponent<BarbarianScript>().timeSurvived).ToString());
+					//Destroy(target);
 				}
 			}
 		}
