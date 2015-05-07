@@ -339,7 +339,11 @@ public class BarbarianScript : MonoBehaviour {
 	void s1Act ()
 	{
 		//Find a target
-		if (numMInSight > 0) {
+		if (numKInSight > 0) {
+			target = getClosestKnight();
+			velocity += gameController.Seek (this.transform.position, target.transform.position, moveSpeed);
+		}
+		else if (numMInSight > 0) {
 			target = getClosestMonk();
 			velocity += gameController.Seek (this.transform.position, target.transform.position, moveSpeed);
 		} else 
