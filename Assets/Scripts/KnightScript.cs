@@ -46,7 +46,7 @@ public class KnightScript : MonoBehaviour {
 		target = gameController.monasteryArray[Random.Range(0, gameController.monasteryArray.Length - 1)];
 		alive = true;
 		hitChance = 25;
-		attackDelay = 2;
+		attackDelay = 5 - Mathf.Log(fitnessValue);
 		timeSurvived = 0;
 		roundKillCount = 0;
 		health = 1;
@@ -54,6 +54,9 @@ public class KnightScript : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+		hitChance = 20 + 25 * Mathf.Log(numKInSight);
+		moveSpeed = 5 + Mathf.Log(fitnessValue);
+		sightRange = 25 + Mathf.Log(fitnessValue);
 		if (!alive)
 			return;
 		if (health <= 0) 
@@ -68,7 +71,6 @@ public class KnightScript : MonoBehaviour {
 		{
 			attackDelay = 0;
 		}
-		hitChance = 25 + 25 * Mathf.Log(numKInSight);
 		Vector3 targetDist = target.transform.position - this.transform.position;
 		if(targetDist.magnitude <= 5)
 		{
@@ -76,7 +78,7 @@ public class KnightScript : MonoBehaviour {
 			if(attackDelay <= 0)
 			{
 				//Debug.Log("KNIGHT: Attacking");
-				attackDelay = 2;
+				attackDelay = 5 - Mathf.Log(fitnessValue);
 				if(Random.Range(1,100) <= hitChance)
 				{
 					target.GetComponent<BarbarianScript>().health--;
