@@ -83,16 +83,19 @@ public class GameController : MonoBehaviour {
 		}
 		marray = marrayNew;
 		if (barray.Count <= 3) {
+			Debug.Log("Barbarians Lost");
 			EmptyArrays();
 			StoreData();
 			Initialize();
 		}
 		else if (karray.Count <= 3) {
+			Debug.Log("Knights and Monks Lost! (Knight Deaths)");
 			EmptyArrays();
 			StoreData();
 			Initialize();
 		}
 		else if (marray.Count <= 3) {
+			Debug.Log("Knights and Monks Lost! (Monk Deaths)");
 			EmptyArrays();
 			StoreData();
 			Initialize();
@@ -116,10 +119,10 @@ public class GameController : MonoBehaviour {
 				fitnessValues.Add(fitness);
 			}
 			instream.Close();
-			Debug.Log("Success");
+			//Debug.Log("Success");
 		}
 		catch{
-			Debug.Log("Failure");
+			//Debug.Log("Failure");
 		}
 	}
 	/*
@@ -243,7 +246,7 @@ public class GameController : MonoBehaviour {
 			//Create barbarians at random locations
 			Vector3 pos = new Vector3(Random.Range(-225.0f, 225.0f), 1, Random.Range(-225.0f, 225.0f));
 			try{
-				Debug.Log("test barb fit");
+				//Debug.Log("test barb fit");
 				barbarianFab.GetComponent<BarbarianScript>().fitnessValue = fitnessValues[creationCount];
 				barbarianFab.GetComponent<BarbarianScript>().chrom = chroms[creationCount];
 			}
@@ -261,7 +264,7 @@ public class GameController : MonoBehaviour {
 			Vector3 pos = new Vector3(Random.Range(-225.0f, 225.0f), 1, Random.Range(-225.0f, 225.0f));
 			try
 			{
-				Debug.Log("test knight fit");
+				//Debug.Log("test knight fit");
 				knightFab.GetComponent<KnightScript>().fitnessValue = fitnessValues[creationCount];
 				knightFab.GetComponent<KnightScript>().chrom = chroms[creationCount];
 			}
@@ -279,7 +282,7 @@ public class GameController : MonoBehaviour {
 			Vector3 pos = new Vector3(Random.Range(-225.0f, 225.0f), 1, Random.Range(-225.0f, 225.0f));
 			try
 			{
-				Debug.Log("test monk fit");
+				//Debug.Log("test monk fit");
 				monkFab.GetComponent<MonkScript>().fitnessValue = fitnessValues[creationCount];
 				monkFab.GetComponent<MonkScript>().chrom = chroms[creationCount];
 			}
