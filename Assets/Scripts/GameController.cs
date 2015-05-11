@@ -29,10 +29,11 @@ public class GameController : MonoBehaviour {
 
 	public int roundNumber;
 	public int[,] monPlace;
+	public float roundTime;
 
 	// Use this for initialization
 	void Start () {
-		monPlace =  new int[,]{ {0, 0}, {100, 0}, {200, 0}, {-100, 0}, {-200, 0}, {-100, 100}, {100, -100} };
+		monPlace =  new int[,]{ {0, 0}, {100, 200}, {200, 0}, {-100, 200}, {-200, 0}, {-100, -200}, {100, -200} };
 		roundNumber = 0;
 		LoadData();
 		Initialize ();
@@ -84,7 +85,14 @@ public class GameController : MonoBehaviour {
 			}
 		}
 		marray = marrayNew;
-		if (barray.Count <= 3) {
+		roundTime += Time.deltaTime;
+		if (roundTime > 120) {
+			Debug.Log ("Round exceeded two minutes, restarting");
+			EmptyArrays ();
+			StoreData ();
+			Initialize ();
+		}
+		else if (barray.Count <= 3) {
 			Debug.Log("Barbarians Lost");
 			EmptyArrays();
 			StoreData();
@@ -307,6 +315,7 @@ public class GameController : MonoBehaviour {
 			creationCount++;
 		}
 		roundNumber++;
+		roundTime = 0;
 	}
 	
 	public Vector3 Seek (Vector3 pos, Vector3 targetPos, float speed)

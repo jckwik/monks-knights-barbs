@@ -57,8 +57,11 @@ public class KnightScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		hitChance = 20 + 25 * Mathf.Log(numKInSight);
-		moveSpeed = 5 + Mathf.Log(fitnessValue);
-		sightRange = 25 + Mathf.Log(fitnessValue);
+		float change;
+		if (Mathf.Log(fitnessValue) > 255 || Mathf.Log(fitnessValue) < 255) change = 0;
+		else change = Mathf.Log(fitnessValue);
+		moveSpeed = 5 + change;
+		sightRange = 25 + change;
 		if (!alive)
 			return;
 		if (health <= 0) 

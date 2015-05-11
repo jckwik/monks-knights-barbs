@@ -79,8 +79,11 @@ public class BarbarianScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		hitChance = 20 + Mathf.Log(fitnessValue);
-		agent.speed = 5 + Mathf.Log(fitnessValue);
-		sightRange = 25 + Mathf.Log(fitnessValue);
+		float change;
+		if (Mathf.Log(fitnessValue) > 255 || Mathf.Log(fitnessValue) < 255) change = 0;
+		else change = Mathf.Log(fitnessValue);
+		agent.speed = 5 + change;
+		sightRange = 25 + change;
 		if (!alive)
 			return;
 		if (health <= 0) 
@@ -103,12 +106,13 @@ public class BarbarianScript : MonoBehaviour {
 				if (targetDist.magnitude <= 5) {
 					//Debug.Log ("Barbarian: In Attack Range");
 					if (attackDelay <= 0) {
-						//Debug.Log ("Barbarian: Attacking");
+						Debug.Log ("Barbarian: Attacking");
 						attackDelay = 5 - Mathf.Log(fitnessValue);
 						if (Random.Range (1, 100) <= hitChance) {
 							//tarUnit.health-=1;
 							if (mScript == null) 
 							{
+								Debug.Log ("Barbarian: Killed a Knight");
 								kScript.health-=1;
 								if(kScript.health <= 0)
 								{
@@ -117,6 +121,7 @@ public class BarbarianScript : MonoBehaviour {
 							}	
 							else
 							{
+								Debug.Log ("Barbarian: Killed a Monk");
 								mScript.health-=1;
 								if(mScript.health <= 0)
 								{
