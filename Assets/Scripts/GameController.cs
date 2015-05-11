@@ -32,7 +32,7 @@ public class GameController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		monPlace =  new int[,]{{0, 0}, {100, 0}, {200, 0}, {-100, 0}, {-200, 0}, {-100, 100}, {100, -100} };
+		monPlace =  new int[,]{ {0, 0}, {100, 0}, {200, 0}, {-100, 0}, {-200, 0}, {-100, 100}, {100, -100} };
 		roundNumber = 0;
 		LoadData();
 		Initialize ();
@@ -240,12 +240,13 @@ public class GameController : MonoBehaviour {
 	void Initialize() {
 		Debug.Log ("Running Initialize");
 		int creationCount = 0;
-		Vector3 playerPos = new Vector3 (0, 1, 0);
+		Vector3 playerPos = new Vector3 (Random.Range(-225.0f, 225.0f), 1, Random.Range(-225.0f, 225.0f));
 		player = (GameObject)Instantiate (playerFab, playerPos, Quaternion.identity);
 		for (int i = 0; i < monastaries; i++) {
-			//Create monastaries
+			GameObject newMon = (GameObject)Instantiate(monasteryFab, new Vector3(monPlace[i, 0], 1, monPlace[i, 1]), Quaternion.identity);
+			monasteryArray.Add (newMon);
 		}
-
+		
 		bStateM = new StateMachine ("BarbarianStateMachine.txt");
 
 		for (int i = 0; i < barbarians; i++) {
@@ -294,10 +295,6 @@ public class GameController : MonoBehaviour {
 			}
 			marray.Add(monk);
 			creationCount++;
-		}
-		for (int i = 0; i < monastaries; i++) {
-			GameObject newMon = (GameObject)Instantiate(monasteryFab, new Vector3(monPlace[i, 0], 1, monPlace[i, 1]), Quaternion.identity);
-			monasteryArray.Add (newMon);
 		}
 		roundNumber++;
 	}

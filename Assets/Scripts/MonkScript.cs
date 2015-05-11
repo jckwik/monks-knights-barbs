@@ -54,8 +54,9 @@ public class MonkScript : MonoBehaviour {
 		direction = Vector3.zero;
 		velocity = Vector3.zero;
 		currentBehavior = behavior.Follow;
-		waypoints = GameObject.FindGameObjectsWithTag ("Monastery");
-		target = waypoints [0];
+		//waypoints = GameObject.FindGameObjectsWithTag ("Monastery");
+		waypoints = gameController.monasteryArray.ToArray ();
+		target = null;
 		targetIndex = 0;
 		leftHit = false;
    		rightHit = false;
