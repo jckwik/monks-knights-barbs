@@ -85,16 +85,19 @@ public class GameController : MonoBehaviour {
 		}
 		marray = marrayNew;
 		if (barray.Count <= 3) {
+			Debug.Log("Barbarians Lost");
 			EmptyArrays();
 			StoreData();
 			Initialize();
 		}
 		else if (karray.Count <= 3) {
+			Debug.Log("Knights and Monks Lost! (Knight Deaths)");
 			EmptyArrays();
 			StoreData();
 			Initialize();
 		}
 		else if (marray.Count <= 3) {
+			Debug.Log("Knights and Monks Lost! (Monk Deaths)");
 			EmptyArrays();
 			StoreData();
 			Initialize();
@@ -113,14 +116,15 @@ public class GameController : MonoBehaviour {
 				string line = instream.ReadLine();
 				string[] tokens = (string[])(line.Split (' '));
 				int chrom = int.Parse(tokens[0]);
-				int fitness = int.Parse(tokens[0]);
+				int fitness = (int)float.Parse(tokens[1]);
 				chroms.Add(chrom);
 				fitnessValues.Add(fitness);
 			}
 			instream.Close();
+			//Debug.Log("Success");
 		}
 		catch{
-
+			//Debug.Log("Failure");
 		}
 	}
 	/*
@@ -252,47 +256,53 @@ public class GameController : MonoBehaviour {
 		for (int i = 0; i < barbarians; i++) {
 			//Create barbarians at random locations
 			Vector3 pos = new Vector3(Random.Range(-225.0f, 225.0f), 1, Random.Range(-225.0f, 225.0f));
-			GameObject barb = (GameObject)Instantiate(barbarianFab, pos, Quaternion.identity);
 			try{
-				barb.GetComponent<BarbarianScript>().fitnessValue = fitnessValues[creationCount];
-				barb.GetComponent<BarbarianScript>().chrom = chroms[creationCount];
+				//Debug.Log("test barb fit");
+				barbarianFab.GetComponent<BarbarianScript>().fitnessValue = fitnessValues[creationCount];
+				barbarianFab.GetComponent<BarbarianScript>().chrom = chroms[creationCount];
 			}
 			catch{
-				barb.GetComponent<BarbarianScript>().fitnessValue = 10;
-				barb.GetComponent<BarbarianScript>().chrom = 10;
+				Debug.Log("test barb fit FAILED");
+				barbarianFab.GetComponent<BarbarianScript>().fitnessValue = 10;
+				barbarianFab.GetComponent<BarbarianScript>().chrom = 10;
 			}
+			GameObject barb = (GameObject)Instantiate(barbarianFab, pos, Quaternion.identity);
 			barray.Add(barb);
 			creationCount++;
 		}
 		for (int i = 0; i < knights; i++) {
 			//Create knights at random locations
 			Vector3 pos = new Vector3(Random.Range(-225.0f, 225.0f), 1, Random.Range(-225.0f, 225.0f));
-			GameObject knight = (GameObject)Instantiate(knightFab, pos, Quaternion.identity);
 			try
 			{
-				knight.GetComponent<KnightScript>().fitnessValue = fitnessValues[creationCount];
-				knight.GetComponent<KnightScript>().chrom = chroms[creationCount];
+				//Debug.Log("test knight fit");
+				knightFab.GetComponent<KnightScript>().fitnessValue = fitnessValues[creationCount];
+				knightFab.GetComponent<KnightScript>().chrom = chroms[creationCount];
 			}
 			catch{
-				knight.GetComponent<KnightScript>().fitnessValue = 10;
-				knight.GetComponent<KnightScript>().chrom = 10;
+				Debug.Log("test knight fit FAILED");
+				knightFab.GetComponent<KnightScript>().fitnessValue = 10;
+				knightFab.GetComponent<KnightScript>().chrom = 10;
 			}
+			GameObject knight = (GameObject)Instantiate(knightFab, pos, Quaternion.identity);
 			karray.Add(knight);
 			creationCount++;
 		}
 		for (int i = 0; i < monks; i++) {
 			//Create monks at random locations
 			Vector3 pos = new Vector3(Random.Range(-225.0f, 225.0f), 1, Random.Range(-225.0f, 225.0f));
-			GameObject monk = (GameObject)Instantiate(monkFab, pos, Quaternion.identity);
 			try
 			{
-				monk.GetComponent<MonkScript>().fitnessValue = fitnessValues[creationCount];
-				monk.GetComponent<MonkScript>().chrom = chroms[creationCount];
+				//Debug.Log("test monk fit");
+				monkFab.GetComponent<MonkScript>().fitnessValue = fitnessValues[creationCount];
+				monkFab.GetComponent<MonkScript>().chrom = chroms[creationCount];
 			}
 			catch{
-				monk.GetComponent<MonkScript>().fitnessValue = 10;
-				monk.GetComponent<MonkScript>().chrom = 10;
+				Debug.Log("test monk fit FAILED");
+				monkFab.GetComponent<MonkScript>().fitnessValue = 10;
+				monkFab.GetComponent<MonkScript>().chrom = 10;
 			}
+			GameObject monk = (GameObject)Instantiate(monkFab, pos, Quaternion.identity);
 			marray.Add(monk);
 			creationCount++;
 		}

@@ -68,6 +68,8 @@ public class MonkScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		moveSpeed = 5 + Mathf.Log(fitnessValue);
+		sightRange = 25 + Mathf.Log(fitnessValue);
 		if (!alive)
 			return;
 		if (health <= 0) 
