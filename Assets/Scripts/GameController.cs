@@ -120,6 +120,10 @@ public class GameController : MonoBehaviour {
 			{
 				monasteryUnderAttackArray.Add (monastery);
 			}
+			if(monScript.health <= 0) {
+				monasteryArray.Remove(monastery);
+				Destroy(monastery);
+			}
 		}
 	}
 
