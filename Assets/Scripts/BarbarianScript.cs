@@ -22,10 +22,12 @@ public class BarbarianScript : MonoBehaviour {
 	List<GameObject> bInSight = new List<GameObject> ();
 	List<GameObject> kInSight = new List<GameObject> ();
 	List<GameObject> mInSight = new List<GameObject> ();
+	List<GameObject> monasteryInSight = new List<GameObject> ();
 	
 	public int numBInSight;
 	public int numKInSight;
 	public int numMInSight;
+	public int numMonasteryInSight;
 	public bool playerInSight;
 
 	public bool alive;
@@ -101,29 +103,50 @@ public class BarbarianScript : MonoBehaviour {
 			//Unit tarUnit = target.GetComponenet<Unit>();
 			MonkScript mScript = target.GetComponent<MonkScript>();
 			KnightScript kScript = target.GetComponent<KnightScript>();
-			if (mScript != null || kScript != null) {// if a monk or a knight
+			MonasteryScript monScript = target.GetComponent<MonasteryScript>();
+			if (mScript != null || kScript != null || monScript != null) {// if a monk or a knight or a monastery
 				Vector3 targetDist = target.transform.position - this.transform.position;
-				if (targetDist.magnitude <= 5) {
-					//Debug.Log ("Barbarian: In Attack Range");
-					if (attackDelay <= 0) {
-						Debug.Log ("Barbarian: Attacking");
-						attackDelay = 5 - Mathf.Log(fitnessValue);
-						if (Random.Range (1, 100) <= hitChance) {
-							//tarUnit.health-=1;
-							if (mScript == null) 
-							{
-								Debug.Log ("Barbarian: Killed a Knight");
-								kScript.health-=1;
-								if(kScript.health <= 0)
+				// if not a monastery
+				if (monScript == null) {
+					if (targetDist.magnitude <= 5) {
+						//Debug.Log ("Barbarian: In Attack Range");
+						if (attackDelay <= 0) {
+							//Debug.Log ("Barbarian: Attacking");
+							attackDelay = 5 - Mathf.Log(fitnessValue);
+							if (Random.Range (1, 100) <= hitChance) {
+								//tarUnit.health-=1;
+								if (kScript != null) 
 								{
-									roundKillCount++;
+									Debug.Log ("Barbarian: Killed a Knight");
+									kScript.health-=1;
+									if(kScript.health <= 0)
+									{
+										roundKillCount++;
+									}
 								}
-							}	
-							else
-							{
-								Debug.Log ("Barbarian: Killed a Monk");
-								mScript.health-=1;
-								if(mScript.health <= 0)
+								else
+								{
+									Debug.Log ("Barbarian: Killed a Monk");
+									mScript.health-=1;
+									if(mScript.health <= 0)
+									{
+										roundKillCount++;
+									}
+								}
+							}
+						}
+					}
+				}
+				// if a monastery
+				else {
+					if (targetDist.magnitude <= 20) {
+						if (attackDelay <= 0) {
+							//Debug.Log ("Barbarian: Attacking");
+							attackDelay = 5 - Mathf.Log(fitnessValue);
+							if (Random.Range (1, 100) <= hitChance) {
+								Debug.Log ("Barbarian: Attacking Monastery");
+								monScript.health -=1;
+								if (monScript.health <=0)
 								{
 									roundKillCount++;
 								}
@@ -191,6 +214,7 @@ public class BarbarianScript : MonoBehaviour {
 		bInSight.Clear();
 		kInSight.Clear();
 		mInSight.Clear();
+		monasteryInSight.Clear();
 		
 		// barbarians in sight
 		List<GameObject> barbs = gameController.barray;
@@ -235,15 +259,28 @@ public class BarbarianScript : MonoBehaviour {
 				playerInSight = true;
 			}
 		}
+
+		//monasteries in sight
+		List<GameObject> monastery = gameController.monasteryArray;
+		for (int i=0; i<monastery.Count; i++) {
+			GameObject mon = monastery[i];
+			
+			// check if they are in range
+			Vector3 diff = mon.transform.position - this.transform.position;
+			if (diff.magnitude <= sightRange) {
+				monasteryInSight.Add(mon);
+			}
+		}
 		
 		numBInSight = bInSight.Count;
 		numKInSight = kInSight.Count;
 		numMInSight = mInSight.Count;
+		numMonasteryInSight = monasteryInSight.Count;
 
 		if (numMInSight > 0 && numKInSight == 0) {
 			MakeTrans (0);
 		}
-		else if (numBInSight == 0 && numKInSight == 0 && numMInSight == 0) {
+		else if (numBInSight == 0 && numKInSight == 0 && numMInSight == 0 && numMonasteryInSight == 0) {
 			MakeTrans (4);
 		}
 		else if (numBInSight > 0 && numKInSight < numBInSight + 2) {
@@ -352,6 +389,9 @@ public class BarbarianScript : MonoBehaviour {
 		}
 		else if (numMInSight > 0) {
 			target = getClosestMonk();
+			velocity += gameController.Seek (this.transform.position, target.transform.position, moveSpeed);
+		} else if (numMonasteryInSight > 0) {
+			target = monasteryInSight[0];
 			velocity += gameController.Seek (this.transform.position, target.transform.position, moveSpeed);
 		} else 
 			MakeTrans (4);
