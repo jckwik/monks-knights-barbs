@@ -265,7 +265,7 @@ public class BarbarianScript : MonoBehaviour {
 			
 			dist = this.transform.position - obj.transform.position;
 			float magn = dist.magnitude;
-			if (magn > record) {
+			if (magn < record) {
 				closest = obj;
 				record = magn;
 			}
@@ -284,7 +284,7 @@ public class BarbarianScript : MonoBehaviour {
 			
 			dist = this.transform.position - obj.transform.position;
 			float magn = dist.magnitude;
-			if (magn > record) {
+			if (magn < record) {
 				closest = obj;
 				record = magn;
 			}

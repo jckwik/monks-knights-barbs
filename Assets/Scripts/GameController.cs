@@ -23,6 +23,7 @@ public class GameController : MonoBehaviour {
 	public List<GameObject> karray = new List<GameObject> ();
 	public List<GameObject> marray = new List<GameObject> ();
 	public List<GameObject> monasteryArray = new List<GameObject> ();
+	public List<GameObject> monasteryUnderAttackArray = new List<GameObject> ();
 	public List<string> roundInfo = new List<string>();
 	public List<int> chroms = new List<int> ();
 	public List<int> fitnessValues = new List<int> ();
@@ -109,6 +110,16 @@ public class GameController : MonoBehaviour {
 			EmptyArrays();
 			StoreData();
 			Initialize();
+		}
+
+		monasteryUnderAttackArray = new List<GameObject> ();
+		foreach(GameObject monastery in monasteryArray)
+		{
+			MonasteryScript monScript = (MonasteryScript) monastery.GetComponent(typeof(MonasteryScript));
+			if(monScript.underAttack == true)
+			{
+				monasteryUnderAttackArray.Add (monastery);
+			}
 		}
 	}
 

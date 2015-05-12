@@ -250,6 +250,32 @@ public class KnightScript : MonoBehaviour {
 
 	bool attackedMonastery()
 	{
+		// check if there are any monasteries under attack
+		if (gameController.monasteryUnderAttackArray.Count != 0) {
+			// get the closest monastery under attack as your target
+			GameObject closestMon = gameController.monasteryUnderAttackArray[0];
+			Vector3 dist = this.transform.position - closestMon.transform.position;
+			float record = dist.magnitude;
+			
+			for (int i=1; i<gameController.monasteryUnderAttackArray.Count; i++) {
+				GameObject obj = gameController.monasteryUnderAttackArray[i];
+				
+				dist = this.transform.position - obj.transform.position;
+				float magn = dist.magnitude;
+				if (magn < record) {
+					closestMon = obj;
+					record = magn;
+				}
+			}
+
+			target = closestMon;
+			return true;
+
+		}
+		else {
+			return false;
+		}
+		/*
 		foreach(GameObject m in gameController.monasteryArray)
 		{
 			MonasteryScript monScript = (MonasteryScript) m.GetComponent(typeof(MonasteryScript));
@@ -260,6 +286,7 @@ public class KnightScript : MonoBehaviour {
 			}
 		}
 		return false;
+		*/
 	}
 
 	bool atAttackedMonastery()
