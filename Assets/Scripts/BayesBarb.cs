@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
+using System;
 
 public struct Observation
 {
@@ -32,8 +33,8 @@ public class BayesBarb {
 	double [] barbMean = new double[2];
 	double [] barbStdDev = new double[2];
 	
-	int [,] monestaryCt = new int[2,2];				// monastery condition (Boolean)
-	double [,] monestaryPrp = new double[2,2];
+	int [,] monasteryCt = new int[2,2];				// monastery condition (Boolean)
+	double [,] monasteryPrp = new double[2,2];
 	
 	int [] aggroCt = new int[2];					// Play action (Boolean) - aggro or defensive
 	double [] aggroPrp = new double[2];
@@ -50,15 +51,15 @@ public class BayesBarb {
 			int aggroOff = obs.aggro ? 0 : 1;
 			
 			knightSum[aggroOff] += obs.knights;
-			kngihtSumSq[aggroOff] += obs.knights*obs.knights;
+			knightSumSq[aggroOff] += obs.knights*obs.knights;
 			
-			monkSum[aggroOff] += obs.monk;
-			monkSumSq[aggroOff] += obs.monk*obs.monk;
+			monkSum[aggroOff] += obs.monks;
+			monkSumSq[aggroOff] += obs.monks*obs.monks;
 			
-			barbSum[aggroOff] += obs.barb;
-			barbSumSq[aggroOff] += obs.barb*obs.barb;
+			barbSum[aggroOff] += obs.barbs;
+			barbSumSq[aggroOff] += obs.barbs*obs.barbs;
 			
-			monasteryCt[obs.monestary?0:1,aggroOff]++;
+			monasteryCt[obs.monastery?0:1,aggroOff]++;
 			
 			aggroCt[aggroOff]++;
 		}
@@ -75,10 +76,10 @@ public class BayesBarb {
 		monkStdDev[0] = StdDev(monkSumSq[0],monkSum[0],aggroCt[0]);
 		monkStdDev[1] = StdDev(monkSumSq[1],monkSum[1],aggroCt[1]);
 		
-		barbMean[0] = Mean(barbSum[0],playCt[0]);
-		barbMean[1] = Mean(barbSum[1],playCt[1]);
-		barbStdDev[0] = StdDev(barbSumSq[0],barbSum[0],playCt[0]);
-		barbStdDev[1] = StdDev(barbSumSq[1],barbSum[1],playCt[1]);
+		barbMean[0] = Mean(barbSum[0],aggroCt[0]);
+		barbMean[1] = Mean(barbSum[1],aggroCt[1]);
+		barbStdDev[0] = StdDev(barbSumSq[0],barbSum[0],aggroCt[0]);
+		barbStdDev[1] = StdDev(barbSumSq[1],barbSum[1],aggroCt[1]);
 		
 		CalcProps(monasteryCt, aggroCt, monasteryPrp);
 		
