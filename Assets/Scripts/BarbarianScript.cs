@@ -38,6 +38,9 @@ public class BarbarianScript : MonoBehaviour {
 	public float timeSurvived;
 	public int roundKillCount;
 	public int chrom;
+	public int timeSinceLastDecision;
+	public bool aggressive;
+	public int decisionKills;
 
 	NavMeshAgent agent;
 
@@ -76,6 +79,9 @@ public class BarbarianScript : MonoBehaviour {
 		timeSurvived = 0;
 		roundKillCount = 0;
 		health = 1;
+		timeSinceLastDecision = 0;
+		decisionKills = 0;
+		makeNewDecision();
 	}
 	
 	// Update is called once per frame
@@ -92,11 +98,22 @@ public class BarbarianScript : MonoBehaviour {
 			alive = !alive;
 		timeSurvived += Time.deltaTime;
 		attackDelay -= Time.deltaTime;
+		timeSinceLastDecision += Time.deltaTime;
 		if(attackDelay < 0)
 		{
 			attackDelay = 0;
 		}
-		findUnitsInSight();
+		if (timeSinceLastDecision > 20) {
+			timeSinceLastDecision = 0;
+			if (decisionKills > 0 && alive) {
+				gameController.bBayes.AddObs(numKInSight, numMInSight, numBInSight, numMonasteryInSight>0, aggressive);
+			}
+			else if (decisionKills == 0 && !alive) {
+				gameController.bBayes.AddObs(numKInSight, numMInSight, numBInSight, numMonasteryInSight>0, !aggressive);
+			}
+			findUnitsInSight();
+			makeNewDecision();
+		}
 		findTarget ();
 		if (target != null) {
 			// Check target type
@@ -104,7 +121,7 @@ public class BarbarianScript : MonoBehaviour {
 			MonkScript mScript = target.GetComponent<MonkScript>();
 			KnightScript kScript = target.GetComponent<KnightScript>();
 			MonasteryScript monScript = target.GetComponent<MonasteryScript>();
-			if (mScript != null || kScript != null || monScript != null) {// if a monk or a knight or a monastery
+			if (mScript != null || kScript != null || monScript != null && aggressive) {// if a monk or a knight or a monastery
 				Vector3 targetDist = target.transform.position - this.transform.position;
 				// if not a monastery
 				if (monScript == null) {
@@ -154,7 +171,8 @@ public class BarbarianScript : MonoBehaviour {
 						}
 					}
 				}
-			}			
+			}
+
 		}
 //		switch(currentBehavior)
 //		{
@@ -198,7 +216,13 @@ public class BarbarianScript : MonoBehaviour {
 		this.transform.position = new Vector3(this.transform.position.x, 1, this.transform.position.z);
 		this.transform.rotation = new Quaternion(0, this.transform.rotation.y, 0, this.transform.rotation.w);
 	}
-	
+
+	void makeNewDecision() {
+		double chance = gameController.bBayes.calcBayes (numKInSight, numMInSight, numBInSight, numMonasteryInSight > 0, true) / 
+			gameController.bBayes.calcBayes (numKInSight, numMInSight, numBInSight, numMonasteryInSight > 0, false);
+		aggressive = chance >= 1;
+	}
+
 	void findTarget() {
 		try {
 			if (target == null) {
@@ -385,14 +409,17 @@ public class BarbarianScript : MonoBehaviour {
 		//Find a target
 		if (numKInSight > 0) {
 			target = getClosestKnight();
-			velocity += gameController.Seek (this.transform.position, target.transform.position, moveSpeed);
+			if (aggressive) velocity += gameController.Seek (this.transform.position, target.transform.position, moveSpeed);
+			else velocity += gameController.Flee (this.transform.position, target.transform.position, moveSpeed);
 		}
 		else if (numMInSight > 0) {
 			target = getClosestMonk();
-			velocity += gameController.Seek (this.transform.position, target.transform.position, moveSpeed);
+			if (aggressive) velocity += gameController.Seek (this.transform.position, target.transform.position, moveSpeed);
+			else velocity += gameController.Flee (this.transform.position, target.transform.position, moveSpeed);
 		} else if (numMonasteryInSight > 0) {
 			target = monasteryInSight[0];
-			velocity += gameController.Seek (this.transform.position, target.transform.position, moveSpeed);
+			if (aggressive) velocity += gameController.Seek (this.transform.position, target.transform.position, moveSpeed);
+			else velocity += gameController.Flee (this.transform.position, target.transform.position, moveSpeed);
 		} else 
 			MakeTrans (4);
 		//Debug.Log ("State1: I'm chasing something!");

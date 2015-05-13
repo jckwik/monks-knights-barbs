@@ -42,6 +42,18 @@ public class BayesBarb {
 	public BayesBarb() {
 	}
 
+	public double CalcBayes(int knights, int monks, int barbs,
+	                        bool monastery, bool aggro)
+	{
+		int playOff = aggro ? 0 : 1;
+		double like = GauProb(knightMean[playOff], knightStdDev[playOff], knights) *
+				GauProb(monkMean[playOff],monkStdDev[playOff],monks) *
+				GauProb(barbMean[playOff],barbStdDev[playOff],barbs) *
+				monasteryPrp[monastery?0:1,playOff] *
+				aggroPrp[playOff];
+		return like;
+	}
+
 	public void BuildStats()
 	{
 		// Accumulate all the counts
@@ -111,6 +123,26 @@ public class BayesBarb {
 		}
 	}
 
+	public void WriteObsTab (string fName)
+	{
+		try {
+			using (StreamWriter rdr = new StreamWriter (fName))
+			{
+				foreach (Observation obs in obsTab) {
+					rdr.Write (obs.knights);
+					rdr.Write (" " + obs.monks);
+					rdr.Write (" " + obs.barbs);
+					rdr.Write (" " + obs.monastery);
+					rdr.WriteLine (" " + obs.aggro);
+				}
+			}
+		} catch
+		{
+			Console.WriteLine ("Problem reading and/or parsing observation file");
+			Environment.Exit (-1);
+		}
+	}
+
 	public void AddObs(int knights, int monks, int barbs,
 	                   bool monastery, bool aggro)
 	{
@@ -168,6 +200,37 @@ public class BayesBarb {
 		double xMinusMean = x - mean;
 		return (1.0d / (stdDev*sqrt2PI)) * 
 			Math.Exp(-1.0d*xMinusMean*xMinusMean / (2.0d*stdDev*stdDev));
+	}
+
+	public void DumpStats()
+	{
+		Console.Write ("Knights ");
+		Console.Write (knightSum[0]+" "+knightSum[1]+" ");
+		Console.Write (knightSumSq[0]+" "+knightSumSq[1]+" ");
+		Console.Write (knightMean[0]+" "+knightMean[1]+" ");
+		Console.WriteLine (knightStdDev[0]+" "+knightStdDev[1]);
+		
+		Console.Write ("Monks ");
+		Console.Write (monkSum[0]+" "+monkSum[1]+" ");
+		Console.Write (monkSumSq[0]+" "+monkSumSq[1]+" ");
+		Console.Write (monkMean[0]+" "+monkMean[1]+" ");
+		Console.WriteLine (monkStdDev[0]+" "+monkStdDev[1]);
+		
+		Console.Write ("Barbs ");
+		Console.Write (barbSum[0]+" "+barbSum[1]+" ");
+		Console.Write (barbSumSq[0]+" "+barbSumSq[1]+" ");
+		Console.Write (barbMean[0]+" "+barbMean[1]+" ");
+		Console.WriteLine (barbStdDev[0]+" "+barbStdDev[1]);
+		
+		Console.Write ("Monastery ");
+		for (int i = 0; i < 2; i++)
+			for (int j = 0; j < 2; j++)
+				Console.Write(monasteryCt[i,j]+" "+monasteryPrp[i,j]+" ");
+		Console.WriteLine ();
+		
+		Console.Write ("Aggro ");
+		Console.Write (aggroCt[0]+" "+aggroPrp[0]+" ");
+		Console.WriteLine (aggroCt[1]+" "+aggroPrp[1]);
 	}
 
 }

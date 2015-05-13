@@ -18,6 +18,7 @@ public class GameController : MonoBehaviour {
 	public GameObject monasteryFab;
 
 	public StateMachine bStateM;
+	public BayesBard bBayes = new BayesGolf();
 
 	public List<GameObject> barray = new List<GameObject> ();
 	public List<GameObject> karray = new List<GameObject> ();
@@ -331,6 +332,8 @@ public class GameController : MonoBehaviour {
 		}
 		roundNumber++;
 		roundTime = 0;
+		bBayes.ReadObsTab ("BarbBayes.txt");
+		bBayes.BuildStats ();
 	}
 	
 	public Vector3 Seek (Vector3 pos, Vector3 targetPos, float speed)
