@@ -38,7 +38,7 @@ public class BarbarianScript : MonoBehaviour {
 	public float timeSurvived;
 	public int roundKillCount;
 	public int chrom;
-	public int timeSinceLastDecision;
+	public float timeSinceLastDecision;
 	public bool aggressive;
 	public int decisionKills;
 
@@ -68,7 +68,7 @@ public class BarbarianScript : MonoBehaviour {
 		gameController = (GameController) gC.GetComponent(typeof(GameController));
 		stM = gameController.bStateM;
 		moveSpeed = 15;
-		sightRange = 50;
+		sightRange = 100;
 		direction = Vector3.zero;
 		velocity = Vector3.zero;
 		groupingStrength = 0.1f;
@@ -105,16 +105,23 @@ public class BarbarianScript : MonoBehaviour {
 		}
 		if (timeSinceLastDecision > 20) {
 			timeSinceLastDecision = 0;
-			if (decisionKills > 0 && alive) {
-				gameController.bBayes.AddObs(numKInSight, numMInSight, numBInSight, numMonasteryInSight>0, aggressive);
-			}
-			else if (decisionKills == 0 && !alive) {
-				gameController.bBayes.AddObs(numKInSight, numMInSight, numBInSight, numMonasteryInSight>0, !aggressive);
-			}
+			checkForStoreBayes();
 			findUnitsInSight();
 			makeNewDecision();
 		}
 		findTarget ();
+		if (numMInSight > 0 && numKInSight == 0) {
+			MakeTrans (0);
+		}
+		else if (numBInSight == 0 && numKInSight == 0 && numMInSight == 0 && numMonasteryInSight == 0) {
+			MakeTrans (4);
+		}
+		else if (numBInSight > 0 && numKInSight < numBInSight + 2) {
+			MakeTrans (2);
+		}
+		else if (numKInSight > numBInSight + 2) {
+			MakeTrans (1);
+		}
 		if (target != null) {
 			// Check target type
 			//Unit tarUnit = target.GetComponenet<Unit>();
@@ -217,10 +224,19 @@ public class BarbarianScript : MonoBehaviour {
 		this.transform.rotation = new Quaternion(0, this.transform.rotation.y, 0, this.transform.rotation.w);
 	}
 
+	public void checkForStoreBayes(){
+		if (decisionKills > 0 && alive) {
+			gameController.bBayes.AddObs (numKInSight, numMInSight, numBInSight, numMonasteryInSight > 0, aggressive);
+		} else if (decisionKills == 0 && !alive) {
+			gameController.bBayes.AddObs (numKInSight, numMInSight, numBInSight, numMonasteryInSight > 0, !aggressive);
+		}
+	}
+
 	void makeNewDecision() {
-		double chance = gameController.bBayes.calcBayes (numKInSight, numMInSight, numBInSight, numMonasteryInSight > 0, true) / 
-			gameController.bBayes.calcBayes (numKInSight, numMInSight, numBInSight, numMonasteryInSight > 0, false);
+		double chance = gameController.bBayes.CalcBayes (numKInSight, numMInSight, numBInSight, numMonasteryInSight > 0, true) / 
+			gameController.bBayes.CalcBayes (numKInSight, numMInSight, numBInSight, numMonasteryInSight > 0, false);
 		aggressive = chance >= 1;
+		Debug.Log (aggressive);
 	}
 
 	void findTarget() {
@@ -300,19 +316,7 @@ public class BarbarianScript : MonoBehaviour {
 		numKInSight = kInSight.Count;
 		numMInSight = mInSight.Count;
 		numMonasteryInSight = monasteryInSight.Count;
-
-		if (numMInSight > 0 && numKInSight == 0) {
-			MakeTrans (0);
-		}
-		else if (numBInSight == 0 && numKInSight == 0 && numMInSight == 0 && numMonasteryInSight == 0) {
-			MakeTrans (4);
-		}
-		else if (numBInSight > 0 && numKInSight < numBInSight + 2) {
-			MakeTrans (2);
-		}
-		else if (numKInSight > numBInSight + 2) {
-			MakeTrans (1);
-		}
+		
 	}
 	public GameObject getClosestMonk() {
 		if (numMInSight <= 0) return null;
@@ -367,15 +371,17 @@ public class BarbarianScript : MonoBehaviour {
 	{
 		// Always group with other barbs
 		if (numBInSight > 0) {
+			if ((BarbarianScript)bInSight[0].GetComponent("BarbarianScript") != null) {
 			BarbarianScript blah = (BarbarianScript)bInSight[0].GetComponent("BarbarianScript");
 			if (blah.target != this.gameObject) {
 				target = bInSight [0];
 				velocity += gameController.Arrive (this.transform.position, target.transform.position, moveSpeed, 20, 5);
 				velocity *= groupingStrength;
 			}
-			else {
-				s0Act();
 			}
+			else 
+				s0Act();
+			
 		}
 		
 		switch (currentState)
@@ -428,8 +434,9 @@ public class BarbarianScript : MonoBehaviour {
 	{
 		//Find a target
 		if (numKInSight > 0) {
-			target = getClosestKnight ();
-			velocity += gameController.Flee (this.transform.position, target.transform.position, moveSpeed);
+			target = getClosestKnight();
+			if (aggressive) velocity += gameController.Seek (this.transform.position, target.transform.position, moveSpeed);
+			else velocity += gameController.Flee (this.transform.position, target.transform.position, moveSpeed);
 		} else
 			MakeTrans (4);
 		//Debug.Log ("State2: Running away!");

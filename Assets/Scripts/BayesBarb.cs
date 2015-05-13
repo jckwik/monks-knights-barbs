@@ -138,7 +138,7 @@ public class BayesBarb {
 			}
 		} catch
 		{
-			Console.WriteLine ("Problem reading and/or parsing observation file");
+			Console.WriteLine ("Problem writing and/or parsing observation file");
 			Environment.Exit (-1);
 		}
 	}

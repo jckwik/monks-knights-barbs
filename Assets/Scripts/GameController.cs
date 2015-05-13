@@ -18,7 +18,7 @@ public class GameController : MonoBehaviour {
 	public GameObject monasteryFab;
 
 	public StateMachine bStateM;
-	public BayesBard bBayes = new BayesGolf();
+	public BayesBarb bBayes = new BayesBarb();
 
 	public List<GameObject> barray = new List<GameObject> ();
 	public List<GameObject> karray = new List<GameObject> ();
@@ -53,6 +53,7 @@ public class GameController : MonoBehaviour {
 			}
 			else {
 				roundInfo.Add((bScript.chrom).ToString() + " " + (bScript.timeSurvived).ToString());
+				bScript.checkForStoreBayes();
 				Destroy(b);
 			}
 		}
@@ -87,6 +88,21 @@ public class GameController : MonoBehaviour {
 			}
 		}
 		marray = marrayNew;
+
+		monasteryUnderAttackArray = new List<GameObject> ();
+		foreach(GameObject monastery in monasteryArray)
+		{
+			MonasteryScript monScript = (MonasteryScript) monastery.GetComponent(typeof(MonasteryScript));
+			if(monScript.underAttack == true)
+			{
+				monasteryUnderAttackArray.Add (monastery);
+			}
+			if(monScript.health <= 0) {
+				monasteryArray.Remove(monastery);
+				Destroy(monastery);
+			}
+		}
+
 		roundTime += Time.deltaTime;
 		if (roundTime > 120) {
 			Debug.Log ("Round exceeded two minutes, restarting");
@@ -111,20 +127,6 @@ public class GameController : MonoBehaviour {
 			EmptyArrays();
 			StoreData();
 			Initialize();
-		}
-
-		monasteryUnderAttackArray = new List<GameObject> ();
-		foreach(GameObject monastery in monasteryArray)
-		{
-			MonasteryScript monScript = (MonasteryScript) monastery.GetComponent(typeof(MonasteryScript));
-			if(monScript.underAttack == true)
-			{
-				monasteryUnderAttackArray.Add (monastery);
-			}
-			if(monScript.health <= 0) {
-				monasteryArray.Remove(monastery);
-				Destroy(monastery);
-			}
 		}
 	}
 
@@ -223,6 +225,8 @@ public class GameController : MonoBehaviour {
 		}
 		outStream.Close ();
 		roundInfo.Clear ();
+
+		bBayes.WriteObsTab ("BarbBayes.txt");
 	}
 
 	void EmptyArrays()

@@ -34,12 +34,16 @@ public class KnightScript : MonoBehaviour {
 	public float timeSurvived;
 	public int roundKillCount;
 	public int chrom;
+	
+	NavMeshAgent agent;
 
 	// Use this for initialization
 	void Start () {
 		GameObject gC = GameObject.Find("Game Controller");
 		gameController = (GameController) gC.GetComponent(typeof(GameController));
-		moveSpeed = 15;
+		agent = GetComponent<NavMeshAgent> ();
+		agent.speed = 5;
+		moveSpeed = 5;
 		sightRange = 50;
 		direction = Vector3.zero;
 		velocity = Vector3.zero;
@@ -118,8 +122,9 @@ public class KnightScript : MonoBehaviour {
 				break;
 		}
 		
-		velocity *= Time.deltaTime;
-		this.transform.position += velocity;
+		//velocity *= Time.deltaTime;
+		//this.transform.position += velocity;
+		agent.SetDestination (this.transform.position + velocity);
 		velocity = Vector3.zero;
 		Debug.DrawLine (this.transform.position, target.transform.position, Color.blue);
 		this.transform.position = new Vector3(this.transform.position.x, 1, this.transform.position.z);
@@ -209,7 +214,13 @@ public class KnightScript : MonoBehaviour {
 				currNode = currNode.NoPtr;    // or "no" child
 		}
 		*/
-		if(attackedMonastery())
+
+		
+		if(barbarianNearby())
+		{
+			return behavior.AttackNearbyBarb;
+		}
+		else if(attackedMonastery())
 		{
 			if(atAttackedMonastery())
 			{
@@ -222,29 +233,22 @@ public class KnightScript : MonoBehaviour {
 		}
 		else
 		{
-			if(barbarianNearby())
+			if(currentBehavior == behavior.ArriveAtARandomMonastery)
 			{
-				return behavior.AttackNearbyBarb;
+				target = gameController.monasteryArray[targetIndex];
+				return behavior.ArriveAtARandomMonastery;
 			}
 			else
 			{
-				if(currentBehavior == behavior.ArriveAtARandomMonastery)
-				{
-					target = gameController.monasteryArray[targetIndex];
-					return behavior.ArriveAtARandomMonastery;
-				}
-				else
-				{
+				targetIndex = Random.Range(0, monArray.Length - 1);
+				if (monArray[targetIndex] == null) {
+					monArray = gameController.monasteryArray.ToArray();
 					targetIndex = Random.Range(0, monArray.Length - 1);
-					if (monArray[targetIndex] == null) {
-						monArray = gameController.monasteryArray.ToArray();
-						targetIndex = Random.Range(0, monArray.Length - 1);
-					}
-					target = monArray[targetIndex];
-
 				}
-				return behavior.ArriveAtARandomMonastery;
+				target = monArray[targetIndex];
+
 			}
+			return behavior.ArriveAtARandomMonastery;
 		}
 	}
 
