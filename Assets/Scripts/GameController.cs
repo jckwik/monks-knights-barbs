@@ -30,6 +30,9 @@ public class GameController : MonoBehaviour {
 	public List<int> fitnessValues = new List<int> ();
 
 	public int roundNumber;
+    public int barbRounds = 0;
+    public int knightRounds = 0;
+    public int tieRounds = 0;
 	public int[,] monPlace;
 	public float roundTime;
 
@@ -106,24 +109,28 @@ public class GameController : MonoBehaviour {
 		roundTime += Time.deltaTime;
 		if (roundTime > 120) {
 			Debug.Log ("Round exceeded two minutes, restarting");
+            tieRounds++;
 			EmptyArrays ();
 			StoreData ();
 			Initialize ();
 		}
 		else if (barray.Count <= 3) {
 			Debug.Log("Barbarians Lost");
+            knightRounds++;
 			EmptyArrays();
 			StoreData();
 			Initialize();
 		}
 		else if (karray.Count <= 3) {
 			Debug.Log("Knights and Monks Lost! (Knight Deaths)");
+            barbRounds++;
 			EmptyArrays();
 			StoreData();
 			Initialize();
 		}
 		else if (marray.Count <= 3) {
 			Debug.Log("Knights and Monks Lost! (Monk Deaths)");
+            barbRounds++;
 			EmptyArrays();
 			StoreData();
 			Initialize();
@@ -270,7 +277,7 @@ public class GameController : MonoBehaviour {
 	}
 
 	void Initialize() {
-		Debug.Log ("Running Initialize");
+		//Debug.Log ("Running Initialize");
 		int creationCount = 0;
 		Vector3 playerPos = new Vector3 (Random.Range(-225.0f, 225.0f), 1, Random.Range(-225.0f, 225.0f));
 		player = (GameObject)Instantiate (playerFab, playerPos, Quaternion.identity);

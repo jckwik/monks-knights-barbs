@@ -27,7 +27,11 @@ public class BarbarianScript : MonoBehaviour {
 	public int numBInSight;
 	public int numKInSight;
 	public int numMInSight;
+    public int decNumBInSight;
+    public int decNumKInSight;
+    public int decNumMInSight;
 	public int numMonasteryInSight;
+    public bool decMonInSight;
 	public bool playerInSight;
 
 	public bool alive;
@@ -91,7 +95,7 @@ public class BarbarianScript : MonoBehaviour {
 		if (Mathf.Log(fitnessValue) > 255 || Mathf.Log(fitnessValue) < 255) change = 0;
 		else change = Mathf.Log(fitnessValue);
 		agent.speed = 5 + change;
-		sightRange = 25 + change;
+		sightRange = 45 + change;
 		if (!alive)
 			return;
 		if (health <= 0) 
@@ -103,25 +107,18 @@ public class BarbarianScript : MonoBehaviour {
 		{
 			attackDelay = 0;
 		}
+        findUnitsInSight();
 		if (timeSinceLastDecision > 20) {
 			timeSinceLastDecision = 0;
 			checkForStoreBayes();
-			findUnitsInSight();
+            decNumBInSight = numBInSight;
+            decNumKInSight = numKInSight;
+            decNumMInSight = numMInSight;
+            decMonInSight = numMonasteryInSight > 0;
 			makeNewDecision();
 		}
+        s1Act();
 		findTarget ();
-		if (numMInSight > 0 && numKInSight == 0) {
-			MakeTrans (0);
-		}
-		else if (numBInSight == 0 && numKInSight == 0 && numMInSight == 0 && numMonasteryInSight == 0) {
-			MakeTrans (4);
-		}
-		else if (numBInSight > 0 && numKInSight < numBInSight + 2) {
-			MakeTrans (2);
-		}
-		else if (numKInSight > numBInSight + 2) {
-			MakeTrans (1);
-		}
 		if (target != null) {
 			// Check target type
 			//Unit tarUnit = target.GetComponenet<Unit>();
@@ -141,20 +138,22 @@ public class BarbarianScript : MonoBehaviour {
 								//tarUnit.health-=1;
 								if (kScript != null) 
 								{
-									Debug.Log ("Barbarian: Killed a Knight");
+									//Debug.Log ("Barbarian: Killed a Knight");
 									kScript.health-=1;
 									if(kScript.health <= 0)
 									{
 										roundKillCount++;
+                                        decisionKills++;
 									}
 								}
 								else
 								{
-									Debug.Log ("Barbarian: Killed a Monk");
+									//Debug.Log ("Barbarian: Killed a Monk");
 									mScript.health-=1;
 									if(mScript.health <= 0)
 									{
 										roundKillCount++;
+                                        decisionKills++;
 									}
 								}
 							}
@@ -163,7 +162,7 @@ public class BarbarianScript : MonoBehaviour {
 				}
 				// if a monastery
 				else {
-					if (targetDist.magnitude <= 20) {
+					if (targetDist.magnitude <= 30) {
 						if (attackDelay <= 0) {
 							//Debug.Log ("Barbarian: Attacking");
 							attackDelay = 5 - Mathf.Log(fitnessValue);
@@ -173,6 +172,7 @@ public class BarbarianScript : MonoBehaviour {
 								if (monScript.health <=0)
 								{
 									roundKillCount++;
+                                    decisionKills++;
 								}
 							}
 						}
@@ -213,8 +213,8 @@ public class BarbarianScript : MonoBehaviour {
 //		}
 
 		CallAction ();
-		
-		Debug.DrawLine (this.transform.position, this.transform.position+velocity, Color.red);
+		if (target == null) Debug.DrawLine (this.transform.position, this.transform.position+velocity, Color.red);
+        else Debug.DrawLine(this.transform.position, target.transform.position, Color.red);
 		//velocity *= Time.deltaTime;
 		//this.transform.position += velocity;
 		agent.SetDestination (this.transform.position + velocity);
@@ -224,19 +224,28 @@ public class BarbarianScript : MonoBehaviour {
 		this.transform.rotation = new Quaternion(0, this.transform.rotation.y, 0, this.transform.rotation.w);
 	}
 
+    void onDestroy()
+    {
+        checkForStoreBayes();
+    }
+
 	public void checkForStoreBayes(){
-		if (decisionKills > 0 && alive) {
-			gameController.bBayes.AddObs (numKInSight, numMInSight, numBInSight, numMonasteryInSight > 0, aggressive);
-		} else if (decisionKills == 0 && !alive) {
-			gameController.bBayes.AddObs (numKInSight, numMInSight, numBInSight, numMonasteryInSight > 0, !aggressive);
-		}
+        if (decisionKills > 0) {
+            gameController.bBayes.AddObs (decNumKInSight, decNumMInSight, decNumBInSight, decMonInSight, aggressive);
+            Debug.Log("Storing good decision");
+        } else if (decisionKills == 0 && !alive) {
+            gameController.bBayes.AddObs(decNumKInSight, decNumMInSight, decNumBInSight, decMonInSight, !aggressive);
+            Debug.Log("Storing bad decision");
+        }
+        //Debug.Log("Not storing a decision");
 	}
 
 	void makeNewDecision() {
-		double chance = gameController.bBayes.CalcBayes (numKInSight, numMInSight, numBInSight, numMonasteryInSight > 0, true) / 
-			gameController.bBayes.CalcBayes (numKInSight, numMInSight, numBInSight, numMonasteryInSight > 0, false);
+		double chance = gameController.bBayes.CalcBayes (decNumKInSight, decNumMInSight, decNumBInSight, decMonInSight, true) / 
+			gameController.bBayes.CalcBayes (decNumKInSight, decNumMInSight, decNumBInSight, decMonInSight, false);
 		aggressive = chance >= 1;
-		Debug.Log (aggressive);
+		//Debug.Log (aggressive);
+        decisionKills = 0;
 	}
 
 	void findTarget() {
@@ -316,7 +325,23 @@ public class BarbarianScript : MonoBehaviour {
 		numKInSight = kInSight.Count;
 		numMInSight = mInSight.Count;
 		numMonasteryInSight = monasteryInSight.Count;
-		
+
+        //if (numMInSight > 0 && numKInSight == 0)
+        //{
+        //    MakeTrans(0);
+        //}
+        //else if (numBInSight == 0 && numKInSight == 0 && numMInSight == 0 && numMonasteryInSight == 0)
+        //{
+        //    MakeTrans(4);
+        //}
+        //else if (numBInSight > 0 && numKInSight < numBInSight + 2)
+        //{
+        //    MakeTrans(2);
+        //}
+        //else if (numKInSight > numBInSight + 2)
+        //{
+        //    MakeTrans(1);
+        //}
 	}
 	public GameObject getClosestMonk() {
 		if (numMInSight <= 0) return null;
@@ -426,8 +451,9 @@ public class BarbarianScript : MonoBehaviour {
 			target = monasteryInSight[0];
 			if (aggressive) velocity += gameController.Seek (this.transform.position, target.transform.position, moveSpeed);
 			else velocity += gameController.Flee (this.transform.position, target.transform.position, moveSpeed);
-		} else 
-			MakeTrans (4);
+		} else
+            velocity += gameController.Wander(this.transform.position, this.transform.forward, moveSpeed, 40, 20);
+			//MakeTrans (4);
 		//Debug.Log ("State1: I'm chasing something!");
 	}
 	void s2Act ()

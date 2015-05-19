@@ -126,7 +126,7 @@ public class BayesBarb {
 	public void WriteObsTab (string fName)
 	{
 		try {
-			using (StreamWriter rdr = new StreamWriter (fName))
+			using (StreamWriter rdr = new StreamWriter (fName, false))
 			{
 				foreach (Observation obs in obsTab) {
 					rdr.Write (obs.knights);
