@@ -259,7 +259,9 @@ public class BarbarianScript : MonoBehaviour {
 		double chance = gameController.bBayes.CalcBayes (decNumKInSight, decNumMInSight, decNumBInSight, decMonInSight, true) / 
 			gameController.bBayes.CalcBayes (decNumKInSight, decNumMInSight, decNumBInSight, decMonInSight, false);
 		aggressive = chance >= 1;
-		//Debug.Log (aggressive);
+        //Debug.Log(gameController.bBayes.CalcBayes(decNumKInSight, decNumMInSight, decNumBInSight, decMonInSight, true));
+        //Debug.Log(gameController.bBayes.CalcBayes(decNumKInSight, decNumMInSight, decNumBInSight, decMonInSight, false));
+		//if (aggressive) Debug.Log (aggressive);
         decisionKills = 0;
 	}
 

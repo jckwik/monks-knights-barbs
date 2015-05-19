@@ -36,6 +36,10 @@ public class GameController : MonoBehaviour {
 	public int[,] monPlace;
 	public float roundTime;
 
+    public AudioClip bDeath;
+    public AudioClip mDeath;
+    public AudioClip kDeath;
+
 	// Use this for initialization
 	void Start () {
 		monPlace =  new int[,]{ {0, 0}, {100, 200}, {200, 0}, {-100, 200}, {-200, 0}, {-100, -200}, {100, -200} };
@@ -56,7 +60,8 @@ public class GameController : MonoBehaviour {
 			}
 			else {
 				roundInfo.Add((bScript.chrom).ToString() + " " + (bScript.timeSurvived).ToString());
-                AudioSource.PlayClipAtPoint(bScript.dieSound.clip, b.transform.position);
+                //bDeath = bScript.dieSound;
+                AudioSource.PlayClipAtPoint(bDeath, b.transform.position);
 				Destroy(b);
 			}
 		}
@@ -72,7 +77,8 @@ public class GameController : MonoBehaviour {
 			}
 			else {
 				roundInfo.Add((kScript.chrom).ToString() + " " + (kScript.timeSurvived).ToString());
-                AudioSource.PlayClipAtPoint(kScript.dieSound.clip, k.transform.position);
+                //kDeath = kScript.dieSound;
+                AudioSource.PlayClipAtPoint(kDeath, k.transform.position);
 				Destroy(k);
 			}
 		}
@@ -88,7 +94,8 @@ public class GameController : MonoBehaviour {
 			}
 			else {
 				roundInfo.Add((mScript.chrom).ToString() + " " + (mScript.timeSurvived * 1.5).ToString());
-                AudioSource.PlayClipAtPoint(mScript.dieSound.clip, m.transform.position);
+                //mDeath = mScript.dieSound;
+                AudioSource.PlayClipAtPoint(mDeath, m.transform.position);
 				Destroy(m);
 			}
 		}
