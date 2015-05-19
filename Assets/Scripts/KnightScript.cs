@@ -39,6 +39,7 @@ public class KnightScript : MonoBehaviour {
 
     AudioSource missSound;
     AudioSource hitSound;
+    public AudioSource dieSound;
 
 	// Use this for initialization
 	void Start () {
@@ -62,6 +63,7 @@ public class KnightScript : MonoBehaviour {
         AudioSource[] asources = gameObject.GetComponents<AudioSource>();
         missSound = asources[0];
         hitSound = asources[1];
+        dieSound = asources[2];
 	}
 
 	// Update is called once per frame

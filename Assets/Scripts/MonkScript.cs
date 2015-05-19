@@ -41,6 +41,7 @@ public class MonkScript : MonoBehaviour {
 	public int chrom;
 
 	NavMeshAgent agent;
+    public AudioSource dieSound;
 
 	//Vector3 lastPos;
 
@@ -64,6 +65,8 @@ public class MonkScript : MonoBehaviour {
 		alive = true;
 		timeSurvived = 0;
 		health = 1;
+        AudioSource[] asources = gameObject.GetComponents<AudioSource>();
+        dieSound = asources[0];
 	}
 	
 	// Update is called once per frame

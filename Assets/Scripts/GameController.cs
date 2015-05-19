@@ -56,7 +56,7 @@ public class GameController : MonoBehaviour {
 			}
 			else {
 				roundInfo.Add((bScript.chrom).ToString() + " " + (bScript.timeSurvived).ToString());
-				bScript.checkForStoreBayes();
+                AudioSource.PlayClipAtPoint(bScript.dieSound.clip, b.transform.position);
 				Destroy(b);
 			}
 		}
@@ -72,6 +72,7 @@ public class GameController : MonoBehaviour {
 			}
 			else {
 				roundInfo.Add((kScript.chrom).ToString() + " " + (kScript.timeSurvived).ToString());
+                AudioSource.PlayClipAtPoint(kScript.dieSound.clip, k.transform.position);
 				Destroy(k);
 			}
 		}
@@ -87,6 +88,7 @@ public class GameController : MonoBehaviour {
 			}
 			else {
 				roundInfo.Add((mScript.chrom).ToString() + " " + (mScript.timeSurvived * 1.5).ToString());
+                AudioSource.PlayClipAtPoint(mScript.dieSound.clip, m.transform.position);
 				Destroy(m);
 			}
 		}
