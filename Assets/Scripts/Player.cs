@@ -15,6 +15,9 @@ public class Player : MonoBehaviour {
 	public Vector3 direction;
 
 	Camera cam;
+    bool moving = true;
+
+    AudioSource walk;
 
 	//public GameObject mainCam;
 
@@ -27,7 +30,7 @@ public class Player : MonoBehaviour {
 		//location = Vector2.zero;
 		//velocity = Vector2.zero;
 		//acceleration = Vector2.zero;
-
+        walk = gameObject.GetComponent<AudioSource>();
 		cam = Camera.main;
 		direction = new Vector3 (1, 0, 0);
 		//cam = (Camera)GameObject.FindGameObjectWithTag("MainCamera");
@@ -35,6 +38,7 @@ public class Player : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        moving = false;
 		//float velX = 0.0f;
 		//float velZ = 0.0f;
 		//direction = new Vector3(this.transform.rotation.y, 0, this.transform.rotation.w);
@@ -42,17 +46,21 @@ public class Player : MonoBehaviour {
 		// Check for up and down movement, else float
 		if(Input.GetKey(moveForward)){
 			this.transform.Translate(Vector3.forward * speed * Time.deltaTime, cam.transform);
+            moving = true;
 		}
 		else if(Input.GetKey(moveBackward)){
 			this.transform.Translate(Vector3.forward * -1f * speed * Time.deltaTime, cam.transform);
+            moving = true;
 		}
 		
 		// Check for left and right movement
 		if(Input.GetKey(moveRight)){
 			this.transform.Translate(Vector3.Cross(-Vector3.forward, Vector3.up) * speed * Time.deltaTime, cam.transform);
+            moving = true;
 		}
 		else if(Input.GetKey(moveLeft)){
 			this.transform.Translate(Vector3.Cross(Vector3.forward, Vector3.up) * speed * Time.deltaTime, cam.transform);
+            moving = true;
 		}
 
 		if (Input.GetKey (turnLeft)) {
@@ -69,5 +77,14 @@ public class Player : MonoBehaviour {
 		this.transform.rotation = new Quaternion(0, this.transform.rotation.y, 0, this.transform.rotation.w);
 		//location += velocity;
 		//velocity += acceleration;
+
+        if (moving && !walk.isPlaying)
+        {
+            walk.Play();
+        }
+        else if (!moving && walk.isPlaying)
+        {
+            walk.Stop();
+        }
 	}
 }

@@ -37,6 +37,9 @@ public class KnightScript : MonoBehaviour {
 	
 	NavMeshAgent agent;
 
+    AudioSource missSound;
+    AudioSource hitSound;
+
 	// Use this for initialization
 	void Start () {
 		GameObject gC = GameObject.Find("Game Controller");
@@ -56,6 +59,9 @@ public class KnightScript : MonoBehaviour {
 		timeSurvived = 0;
 		roundKillCount = 0;
 		health = 1;
+        AudioSource[] asources = gameObject.GetComponents<AudioSource>();
+        missSound = asources[0];
+        hitSound = asources[1];
 	}
 
 	// Update is called once per frame
@@ -95,11 +101,14 @@ public class KnightScript : MonoBehaviour {
 					{
 						barb.health -= 1;
 						roundKillCount++;
+                        hitSound.Play();
 					}
 					//gameController.barray.Remove (target);
 					//gameController.roundInfo.Add((target.GetComponent<BarbarianScript>().chrom).ToString() + " " + (target.GetComponent<BarbarianScript>().timeSurvived).ToString());
 					//Destroy(target);
 				}
+                else
+                    missSound.Play();
 			}
 		}
 		findUnitsInSight();

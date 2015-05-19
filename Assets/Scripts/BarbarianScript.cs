@@ -48,6 +48,9 @@ public class BarbarianScript : MonoBehaviour {
 
 	NavMeshAgent agent;
 
+    AudioSource missSound;
+    AudioSource hitSound;
+
 	/* State Machine: 
 	 *  -> States:
 	 * 4
@@ -86,6 +89,9 @@ public class BarbarianScript : MonoBehaviour {
 		timeSinceLastDecision = 0;
 		decisionKills = 0;
 		makeNewDecision();
+        AudioSource[] asources = gameObject.GetComponents<AudioSource>();
+        missSound = asources[0];
+        hitSound = asources[1];
 	}
 	
 	// Update is called once per frame
@@ -134,29 +140,33 @@ public class BarbarianScript : MonoBehaviour {
 						if (attackDelay <= 0) {
 							//Debug.Log ("Barbarian: Attacking");
 							attackDelay = 5 - Mathf.Log(fitnessValue);
-							if (Random.Range (1, 100) <= hitChance) {
-								//tarUnit.health-=1;
-								if (kScript != null) 
-								{
-									//Debug.Log ("Barbarian: Killed a Knight");
-									kScript.health-=1;
-									if(kScript.health <= 0)
-									{
-										roundKillCount++;
+                            if (Random.Range(1, 100) <= hitChance)
+                            {
+                                hitSound.Play();
+                                //tarUnit.health-=1;
+                                if (kScript != null)
+                                {
+                                    //Debug.Log ("Barbarian: Killed a Knight");
+                                    kScript.health -= 1;
+                                    if (kScript.health <= 0)
+                                    {
+                                        roundKillCount++;
                                         decisionKills++;
-									}
-								}
-								else
-								{
-									//Debug.Log ("Barbarian: Killed a Monk");
-									mScript.health-=1;
-									if(mScript.health <= 0)
-									{
-										roundKillCount++;
+                                    }
+                                }
+                                else
+                                {
+                                    //Debug.Log ("Barbarian: Killed a Monk");
+                                    mScript.health -= 1;
+                                    if (mScript.health <= 0)
+                                    {
+                                        roundKillCount++;
                                         decisionKills++;
-									}
-								}
-							}
+                                    }
+                                }
+                            }
+                            else
+                                missSound.Play();
 						}
 					}
 				}
@@ -167,6 +177,7 @@ public class BarbarianScript : MonoBehaviour {
 							//Debug.Log ("Barbarian: Attacking");
 							attackDelay = 5 - Mathf.Log(fitnessValue);
 							if (Random.Range (1, 100) <= hitChance) {
+                                hitSound.Play();
 								//Debug.Log ("Barbarian: Attacking Monastery");
 								monScript.health -=1;
 								if (monScript.health <=0)
@@ -175,6 +186,8 @@ public class BarbarianScript : MonoBehaviour {
                                     decisionKills++;
 								}
 							}
+                            else
+                                missSound.Play();
 						}
 					}
 				}
