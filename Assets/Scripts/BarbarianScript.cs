@@ -93,7 +93,7 @@ public class BarbarianScript : MonoBehaviour {
         AudioSource[] asources = gameObject.GetComponents<AudioSource>();
         missSound = asources[0];
         hitSound = asources[1];
-        dieSound = asources[2];
+        //dieSound = asources[2];
 	}
 	
 	// Update is called once per frame
