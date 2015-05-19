@@ -66,7 +66,7 @@ public class MonkScript : MonoBehaviour {
 		timeSurvived = 0;
 		health = 1;
         AudioSource[] asources = gameObject.GetComponents<AudioSource>();
-       // dieSound = asources[0];
+        dieSound = asources[0];
 	}
 	
 	// Update is called once per frame
