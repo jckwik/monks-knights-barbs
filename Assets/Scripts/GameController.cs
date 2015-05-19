@@ -93,6 +93,7 @@ public class GameController : MonoBehaviour {
 		marray = marrayNew;
 
 		monasteryUnderAttackArray = new List<GameObject> ();
+        List<GameObject> newMonArray = new List<GameObject>();
 		foreach(GameObject monastery in monasteryArray)
 		{
 			MonasteryScript monScript = (MonasteryScript) monastery.GetComponent(typeof(MonasteryScript));
@@ -100,11 +101,14 @@ public class GameController : MonoBehaviour {
 			{
 				monasteryUnderAttackArray.Add (monastery);
 			}
-			if(monScript.health <= 0) {
-				monasteryArray.Remove(monastery);
-				Destroy(monastery);
-			}
+            if (monScript.health <= 0)
+            {
+                monasteryArray.Remove(monastery);
+                Destroy(monastery);
+            }
+            else newMonArray.Add(monastery);
 		}
+        monasteryArray = newMonArray;
 
 		roundTime += Time.deltaTime;
 		if (roundTime > 120) {
@@ -343,6 +347,7 @@ public class GameController : MonoBehaviour {
 		}
 		roundNumber++;
 		roundTime = 0;
+        bBayes = new BayesBarb();
 		bBayes.ReadObsTab ("BarbBayes.txt");
 		bBayes.BuildStats ();
 	}
