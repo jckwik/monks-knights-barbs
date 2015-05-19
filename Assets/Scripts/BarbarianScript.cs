@@ -167,7 +167,7 @@ public class BarbarianScript : MonoBehaviour {
 							//Debug.Log ("Barbarian: Attacking");
 							attackDelay = 5 - Mathf.Log(fitnessValue);
 							if (Random.Range (1, 100) <= hitChance) {
-								Debug.Log ("Barbarian: Attacking Monastery");
+								//Debug.Log ("Barbarian: Attacking Monastery");
 								monScript.health -=1;
 								if (monScript.health <=0)
 								{
@@ -232,10 +232,10 @@ public class BarbarianScript : MonoBehaviour {
 	public void checkForStoreBayes(){
         if (decisionKills > 0) {
             gameController.bBayes.AddObs (decNumKInSight, decNumMInSight, decNumBInSight, decMonInSight, aggressive);
-            Debug.Log("Storing good decision");
+            //Debug.Log("Storing good decision");
         } else if (decisionKills == 0 && !alive) {
             gameController.bBayes.AddObs(decNumKInSight, decNumMInSight, decNumBInSight, decMonInSight, !aggressive);
-            Debug.Log("Storing bad decision");
+            //Debug.Log("Storing bad decision");
         }
         //Debug.Log("Not storing a decision");
 	}
