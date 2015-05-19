@@ -63,17 +63,21 @@ public class KnightScript : MonoBehaviour {
         AudioSource[] asources = gameObject.GetComponents<AudioSource>();
         missSound = asources[0];
         hitSound = asources[1];
-        dieSound = asources[2];
+       // dieSound = asources[2];
 	}
 
 	// Update is called once per frame
 	void Update () {
+		if(fitnessValue <= 0)
+		{
+			fitnessValue = 1;
+		}
 		hitChance = 20 + 25 * Mathf.Log(numKInSight);
-		float change;
-		if (Mathf.Log(fitnessValue) > 255 || Mathf.Log(fitnessValue) < 255) change = 0;
-		else change = Mathf.Log(fitnessValue);
-		moveSpeed = 5 + change;
-		sightRange = 25 + change;
+		//float change;
+		//if (Mathf.Log(fitnessValue) > 255 || Mathf.Log(fitnessValue) < 255) change = 0;
+		//else change = Mathf.Log(fitnessValue);
+		agent.speed = 5 + Mathf.Log(fitnessValue);
+		sightRange = 25 + Mathf.Log(fitnessValue);
 		if (!alive)
 			return;
 		if (health <= 0) 
@@ -101,6 +105,7 @@ public class KnightScript : MonoBehaviour {
 					BarbarianScript barb = target.GetComponent<BarbarianScript>();
 					if (barb != null)
 					{
+						Debug.Log ("Knight: Killed a Barbarian");
 						barb.health -= 1;
 						roundKillCount++;
                         hitSound.Play();

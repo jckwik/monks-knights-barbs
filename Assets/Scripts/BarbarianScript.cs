@@ -93,17 +93,21 @@ public class BarbarianScript : MonoBehaviour {
         AudioSource[] asources = gameObject.GetComponents<AudioSource>();
         missSound = asources[0];
         hitSound = asources[1];
-        dieSound = asources[2];
+       // dieSound = asources[2];
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		if(fitnessValue <= 0)
+		{
+			fitnessValue = 1;
+		}
 		hitChance = 20 + Mathf.Log(fitnessValue);
-		float change;
-		if (Mathf.Log(fitnessValue) > 255 || Mathf.Log(fitnessValue) < 255) change = 0;
-		else change = Mathf.Log(fitnessValue);
-		agent.speed = 5 + change;
-		sightRange = 45 + change;
+		//float change;
+		//if (Mathf.Log(fitnessValue) > 255 || Mathf.Log(fitnessValue) < 255) change = 0;
+		//else change = Mathf.Log(fitnessValue);
+		agent.speed = 5 + Mathf.Log(fitnessValue);
+		sightRange = 45 + Mathf.Log(fitnessValue);
 		if (!alive)
 			return;
 		if (health <= 0) 
