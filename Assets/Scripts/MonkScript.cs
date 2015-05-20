@@ -80,6 +80,7 @@ public class MonkScript : MonoBehaviour {
 		if (health <= 0) 
 			alive = !alive;
 		timeSurvived += Time.deltaTime;
+        findTarget();
 		FindUnitsInSight();
 		//agent.SetDestination (target.transform.position);
 		DetermineBehavior ();
@@ -144,7 +145,22 @@ public class MonkScript : MonoBehaviour {
 		Debug.DrawLine (this.transform.position, target.transform.position, Color.green);
 		this.transform.position = new Vector3(this.transform.position.x, 1, this.transform.position.z);
 		this.transform.rotation = new Quaternion(0, this.transform.rotation.y, 0, this.transform.rotation.w);
-	}	
+	}
+
+    void findTarget()
+    {
+        try
+        {
+            if (target == null)
+            {
+                //target = gameController.player;
+            }
+        }
+        catch
+        {
+            target = null;
+        }
+    }
 	
 	void FindUnitsInSight() {
 		// clear the arrays
@@ -323,33 +339,41 @@ public class MonkScript : MonoBehaviour {
 
 		}
 		else{
-			//Else check distance too monasteries
-			float closestDist = float.MaxValue;
-			GameObject closestSafeMon = waypoints[0];
-			foreach(GameObject w in waypoints)
-			{
-				Vector3 diff = w.transform.position - this.transform.position;
-				if(diff.magnitude < closestDist)
-				{
-					closestDist = diff.magnitude;
-					target = w;
-					if(!(w.GetComponent<MonasteryScript>().underAttack))
-					{
-						closestSafeMon = w;
-					}
-				}
-			}
+            try
+            {
+                //Else check distance too monasteries
+                float closestDist = float.MaxValue;
+                GameObject closestSafeMon = waypoints[0];
+                foreach (GameObject w in waypoints)
+                {
+                    Vector3 diff = w.transform.position - this.transform.position;
+                    if (diff.magnitude < closestDist)
+                    {
+                        closestDist = diff.magnitude;
+                        target = w;
+                        if (!(w.GetComponent<MonasteryScript>().underAttack))
+                        {
+                            closestSafeMon = w;
+                        }
+                    }
+                }
 
-			//If too far from closest one
-			if(closestDist > 40)
-			{
-				currentBehavior = behavior.Seek;
-				target = closestSafeMon;
-			}
-			//Else wander around your current monastery
-			else{
-				currentBehavior = behavior.Wander;
-			}
+                //If too far from closest one
+                if (closestDist > 40)
+                {
+                    currentBehavior = behavior.Seek;
+                    target = closestSafeMon;
+                }
+                //Else wander around your current monastery
+                else
+                {
+                    currentBehavior = behavior.Wander;
+                }
+            }
+            catch
+            {
+                waypoints = gameController.monasteryArray.ToArray();
+            }
 
 		}
 	}

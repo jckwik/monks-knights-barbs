@@ -229,3 +229,6 @@
 1 1 0 False True
 0 0 0 False False
 1 0 1 False True
+2 0 1 False True
+0 1 0 False True
+2 0 1 False True
