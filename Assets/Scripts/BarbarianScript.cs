@@ -136,7 +136,7 @@ public class BarbarianScript : MonoBehaviour {
 			MonkScript mScript = target.GetComponent<MonkScript>();
 			KnightScript kScript = target.GetComponent<KnightScript>();
 			MonasteryScript monScript = target.GetComponent<MonasteryScript>();
-			if (mScript != null || kScript != null || monScript != null && aggressive) {// if a monk or a knight or a monastery
+			if ((mScript != null || kScript != null || monScript != null) && aggressive) {// if a monk or a knight or a monastery
 				Vector3 targetDist = target.transform.position - this.transform.position;
 				// if not a monastery
 				if (monScript == null) {
